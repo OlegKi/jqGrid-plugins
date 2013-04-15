@@ -13,7 +13,7 @@
     $.extend($.fn.fmatter, {
         clickableCheckbox: function (cellValue, options) {
             var op = $.extend({}, $.jgrid.formatter.checkbox, options.colModel.formatoptions);
-            if ($.fmatter.isEmpty(cellValue) || $.fmatter.isUndefined(cellValue)) {
+            if ($.fmatter.isEmpty(cellValue) || cellValue === undefined) {
                 cellValue = $.fn.fmatter.defaultFormat(cellValue, op);
             }
             cellValue = String(cellValue).toLowerCase();
