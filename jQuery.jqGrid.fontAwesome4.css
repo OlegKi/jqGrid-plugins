@@ -23,8 +23,8 @@
     padding-top: 1px;
 }
 
-.ui-jqgrid .ui-jqgrid-titlebar-close.fa-title span { font-size: 18px; margin-top: 0; margin-bottom: 0; display: inline-block; margin-right: 4px; }
-.ui-jqgrid .ui-jqgrid-titlebar-close.fa-title { margin: 1px 2px; top: 0; padding-top: 1px; padding-left: 2px; }
+.ui-jqgrid .ui-jqgrid-titlebar-close.fa-title span { font-size: 18px; display: inline-block; }
+.ui-jqgrid .ui-jqgrid-titlebar-close.fa-title { margin-top: 0; top: 0; padding-left: 2px; padding-bottom: 2px;}
 .ui-jqgrid .ui-icon-asc.fa { height: auto; margin-top: 0; }
 .ui-jqgrid .ui-icon-asc.fa, .ui-jqgrid .ui-icon-desc.fa {
     height: auto; margin-top: 2px; margin-left: 2px;
