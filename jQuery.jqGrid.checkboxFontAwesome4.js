@@ -1,0 +1,27 @@
+/**
+ * Copyright (c) 2013, Oleg Kiriljuk, oleg.kiriljuk@ok-soft-gmbh.com
+ * Dual licensed under the MIT and GPL licenses
+ * http://www.opensource.org/licenses/mit-license.php
+ * http://www.gnu.org/licenses/gpl-2.0.html
+ * Date: 2012-01-19
+ * see http://stackoverflow.com/q/20151921/315935 for more details
+ */
+/*global jQuery */
+(function ($) {
+    "use strict";
+    /*jslint unparam: true */
+    $.extend($.fn.fmatter, {
+        checkboxFontAwesome4: function (cellValue, options) {
+            var title = options.colModel.title !== false ? ' title="' + (options.colName || options.colModel.label || options.colModel.name) + '"' : '';
+            return (cellValue === 1 || String(cellValue) === "1" || cellValue === true || String(cellValue).toLowerCase() === "true") ?
+                '<i class="fa fa-check-square-o fa-lg"' + title + '></i>' :
+                '<i class="fa fa-square-o fa-lg"' + title + '></i>';
+        }
+    });
+    $.extend($.fn.fmatter.checkboxFontAwesome4, {
+        unformat: function (cellValue, options, elem) {
+            var cbv = (options.colModel.editoptions) ? options.colModel.editoptions.value.split(":") : ["Yes", "No"];
+            return $(">i", elem).hasClass("fa-check-square-o") ? cbv[0] : cbv[1];
+        }
+    });
+}(jQuery));
