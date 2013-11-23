@@ -4,7 +4,7 @@
  * http://www.opensource.org/licenses/mit-license.php
  * http://www.gnu.org/licenses/gpl-2.0.html
  * Date: 2012-01-19
- * see http://stackoverflow.com/q/20151921/315935 for more details
+ * see http://stackoverflow.com/a/20165553/315935 for more details
  */
 /*global jQuery */
 (function ($) {
