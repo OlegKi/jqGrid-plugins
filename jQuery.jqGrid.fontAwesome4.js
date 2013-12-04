@@ -36,7 +36,7 @@
                 save: "fa fa-floppy-o",
                 undo: "fa fa-undo",
                 close: "fa fa-times",
-                delete: "fa fa-trash-o"
+                "delete": "fa fa-trash-o"
             },
             searchForm: {
                 reset: "fa fa-undo",
@@ -105,7 +105,7 @@
             $iconSpans.each(function () {
                 var $this = $(this), $fmButton = $this.parent();
                 if ($this.hasClass("ui-icon-scissors")) {
-                    $fmButton.html("<span class=\"" + $.jgrid.icons.form.delete + "\"></span><span>" + $fmButton.text() + "</span>");
+                    $fmButton.html("<span class=\"" + $.jgrid.icons.form["delete"] + "\"></span><span>" + $fmButton.text() + "</span>");
                     $fmButtonNew.append($fmButton);
                 } else if ($this.hasClass("ui-icon-cancel")) {
                     $fmButton.html("<span class=\"" + $.jgrid.icons.form.undo + "\"></span><span>" + $fmButton.text() + "</span>");
