@@ -31,11 +31,21 @@
 }
 .ui-jqgrid .s-ico>.ui-state-disabled.fa, .s-ico>.ui-state-disabled.fa { padding: 0; }
 
-.ui-jqdialog .ui-jqdialog-titlebar-close { text-decoration: none; right: 0.2em !important}
-.ui-jqdialog .ui-jqdialog-titlebar-close>span { margin-top: 3px; margin-left: 5px;}
-.ui-jqdialog .EditTable .fm-button-icon-right { padding-left: 0; padding-right: 0.5em; float:right;}
-.ui-jqdialog .EditTable .fm-button-icon-left { padding-left: 0; float:left; }
-.ui-jqdialog .EditButton>.fm-button { display: block; width: auto; }
-.ui-jqdialog .EditButton>.fm-button>span { float: left; margin-left: 0.5em; margin-right: 0;}
+.ui-jqdialog .ui-jqdialog-titlebar-close {
+    text-decoration: none;
+}
+.ui-jqdialog .ui-jqdialog-titlebar-close>span { margin-top: 0.3em; margin-left: 0.4em; margin-right: 0.4em}
+.fm-button-icon-left>span.fa {
+    margin-left: -1.2em;
+    left: 1.8em;
+    position: absolute;
+    top: 0.6em;
+}
+.fm-button-icon-right>span.fa {
+    margin-right: -1.2em;
+    right: 1.7em;
+    position: absolute;
+    top: 0.6em;
+}
 .ui-jqgrid .ui-jqdialog .fm-button>span { margin-left: 0.5em; margin-right: 0; }
 .ui-jqdialog>.ui-resizable-se { bottom: -3px; right: -3px}
