@@ -12,47 +12,44 @@
     /*jslint unparam: true */
     $.extend($.jgrid, {
         icons: {
-            common: "fa",
-            scale: "", // fa-lg
-            titleVisibleGrid: "fa fa-arrow-circle-up",
-            titleHiddenGrid: "fa fa-arrow-circle-down",
+            common: "fa", // "fa fa-lg"
+            titleVisibleGrid: "fa-chevron-circle-up",
+            titleHiddenGrid: "fa-chevron-circle-down",
             titleIcon: "ui-corner-all fa-title",
-            close: "fa fa-times",
-            edit: "fa fa-pencil fa-fw",
-            add: "fa fa-plus fa-fw",
-            del: "fa fa-trash-o fa-fw",
-            search: "fa fa-search fa-fw",
-            refresh: "fa fa-refresh fa-fw",
-            view: "fa fa-file-o fa-fw",
-            pager: {
-                first: "fa fa-step-backward fa-fw",
-                prev: "fa fa-backward fa-fw",
-                next: "fa fa-forward fa-fw",
-                last: "fa fa-step-forward fa-fw"
-            },
-            form: {
-                prev: "fa fa-caret-left",
-                next: "fa fa-caret-right",
-                save: "fa fa-floppy-o",
-                undo: "fa fa-undo",
-                close: "fa fa-times",
-                "delete": "fa fa-trash-o"
-            },
-            searchForm: {
-                reset: "fa fa-undo",
-                query: "fa fa-comments-o",
-                search: "fa fa-search"
+            close: "fa-times",
+            sortAsc: "fa-sort-asc fa-lg",
+            sortDesc: "fa-sort-desc fa-lg",
+            navEdit: "fa-pencil fa-fw",
+            navAdd: "fa-plus fa-fw",
+            navDel: "fa-trash-o fa-fw",
+            navSearch: "fa-search fa-fw",
+            navRefresh: "fa-refresh fa-fw",
+            navView: "fa-file-o fa-fw",
+            pagerFirst: "fa-step-backward fa-fw",
+            pagerPrev: "fa-backward fa-fw",
+            pagerNext: "fa-forward fa-fw",
+            pagerLast: "fa-step-forward fa-fw",
+            formPrev: "fa-caret-left",
+            formNext: "fa-caret-right",
+            formSave: "fa-floppy-o",
+            formUndo: "fa-undo",
+            formDel: "fa-trash-o",
+            searchReset: "fa-undo",
+            searchQuery: "fa-comments-o",
+            searchSearch: "fa-search",
+            getClass: function (prop) {
+                return this.common !== "" ? this.common + " " + this[prop] : this[prop];
             }
         }
     });
 
     $.extend($.jgrid.nav, {
-        editicon: $.jgrid.icons.edit,
-        addicon: $.jgrid.icons.add,
-        delicon: $.jgrid.icons.del,
-        searchicon: $.jgrid.icons.search,
-        refreshicon: $.jgrid.icons.refresh,
-        viewicon: $.jgrid.icons.view
+        editicon: $.jgrid.icons.getClass("navEdit"),
+        addicon: $.jgrid.icons.getClass("navAdd"),
+        delicon: $.jgrid.icons.getClass("navDel"),
+        searchicon: $.jgrid.icons.getClass("navSearch"),
+        refreshicon: $.jgrid.icons.getClass("navRefresh"),
+        viewicon: $.jgrid.icons.getClass("navView")
     });
 
     $.extend($.jgrid.defaults, {
@@ -66,7 +63,7 @@
             if ($(insertSelector).find(">.ui-jqgrid-bdiv>div>.ui-jqgrid-btable").jqGrid("getGridParam", "fontAwesomeIcons")) {
                 $("#" + $.jgrid.jqID(aIDs.modalhead) + ">a.ui-jqdialog-titlebar-close>span.ui-icon")
                     .removeClass("ui-icon ui-icon-closethick")
-                    .addClass($.jgrid.icons.close);
+                    .addClass($.jgrid.icons.getClass("close"));
                 $("#" + $.jgrid.jqID(aIDs.themodal) + ">div.jqResize").removeClass("ui-icon-grip-diagonal-se");
             }
         }
@@ -80,14 +77,14 @@
                 var $this = $(this), $fmButton = $this.parent();
                 if ($this.hasClass("ui-icon-triangle-1-w")) {
                     $this.removeClass("ui-icon ui-icon-triangle-1-w")
-                        .addClass($.jgrid.icons.form.prev);
+                        .addClass($.jgrid.icons.getClass("formPrev"));
                 } else if ($this.hasClass("ui-icon-triangle-1-e")) {
                     $this.removeClass("ui-icon ui-icon-triangle-1-e")
-                        .addClass($.jgrid.icons.form.next);
+                        .addClass($.jgrid.icons.getClass("formNext"));
                 } else if ($this.hasClass("ui-icon-close")) {
                     $fmButton.removeClass("fm-button-icon-left")
-                        .addClass("fm-button-icon-right")
-                        .html("<span class=\"" + $.jgrid.icons.form.close + "\"></span><span>" + $fmButton.text() + "</span>");
+                        .addClass("fm-button fm-button-icon-right")
+                        .html("<span class=\"" + $.jgrid.icons.getClass("close") + "\"></span><span>" + $fmButton.text() + "</span>");
                 }
 
             });
@@ -105,10 +102,10 @@
             $iconSpans.each(function () {
                 var $this = $(this), $fmButton = $this.parent();
                 if ($this.hasClass("ui-icon-scissors")) {
-                    $fmButton.html("<span class=\"" + $.jgrid.icons.form["delete"] + "\"></span><span>" + $fmButton.text() + "</span>");
+                    $fmButton.html("<span class=\"" + $.jgrid.icons.getClass("formDel") + "\"></span><span>" + $fmButton.text() + "</span>");
                     $fmButtonNew.append($fmButton);
                 } else if ($this.hasClass("ui-icon-cancel")) {
-                    $fmButton.html("<span class=\"" + $.jgrid.icons.form.undo + "\"></span><span>" + $fmButton.text() + "</span>");
+                    $fmButton.html("<span class=\"" + $.jgrid.icons.getClass("formUndo") + "\"></span><span>" + $fmButton.text() + "</span>");
                     $fmButtonNew.append($fmButton);
                 }
             });
@@ -132,16 +129,16 @@
                         $this.removeClass("ui-icon");
                         if ($this.hasClass("ui-icon-search")) {
                             $this.closest(".EditButton").css("float", "right");
-                            $fmButton.addClass("fm-button-icon-right")
-                                .html("<span class=\"" + $.jgrid.icons.searchForm.search + "\"></span><span>" + $fmButton.text() + "</span>");
+                            $fmButton.addClass("fm-button fm-button-icon-right")
+                                .html("<span class=\"" + $.jgrid.icons.getClass("searchSearch") + "\"></span><span>" + $fmButton.text() + "</span>");
                         } else if ($this.hasClass("ui-icon-arrowreturnthick-1-w")) {
                             $this.closest(".EditButton").css("float", "left");
-                            $fmButton.addClass("fm-button-icon-left")
-                                .html("<span class=\"" + $.jgrid.icons.searchForm.reset + "\"></span><span>" + $fmButton.text() + "</span>");
+                            $fmButton.addClass("fm-button fm-button-icon-left")
+                                .html("<span class=\"" + $.jgrid.icons.getClass("searchReset") + "\"></span><span>" + $fmButton.text() + "</span>");
                         } else if ($this.hasClass("ui-icon-comment")) {
                             $this.closest(".EditButton").css("float", "right");
-                            $fmButton.addClass("fm-button-icon-right")
-                                .html("<span class=\"" + $.jgrid.icons.searchForm.query + "\"></span><span>" + $fmButton.text() + "</span>");
+                            $fmButton.addClass("fm-button fm-button-icon-right")
+                                .html("<span class=\"" + $.jgrid.icons.getClass("searchQuery") + "\"></span><span>" + $fmButton.text() + "</span>");
                         }
                     });
                 }).bind("jqGridAddEditBeforeShowForm", function (e, $form) {
@@ -152,18 +149,24 @@
                         var $this = $(this), $fmButton = $this.parent();
                         if ($this.hasClass("ui-icon-triangle-1-w")) {
                             $this.removeClass("ui-icon ui-icon-triangle-1-w")
-                                .addClass($.jgrid.icons.form.prev);
+                                .addClass($.jgrid.icons.getClass("formPrev"));
                         } else if ($this.hasClass("ui-icon-triangle-1-e")) {
                             $this.removeClass("ui-icon ui-icon-triangle-1-e")
-                                .addClass($.jgrid.icons.form.next);
+                                .addClass($.jgrid.icons.getClass("formNext"));
                         } else if ($this.hasClass("ui-icon-disk")) {
-                            $this.closest(".EditButton").css("float", "right");
-                            $fmButton.html("<span class=\"" + $.jgrid.icons.form.save + "\"></span><span>" + $fmButton.text() + "</span>");
+                            //$this.closest(".EditButton").css("float", "right");
+                            if ($fmButton.hasClass("fm-button-icon-right")) {
+                                $fmButton.html("<span>" + $fmButton.text() + "</span><span class=\"" + $.jgrid.icons.getClass("formSave") + "\"></span>");
+                            } else {
+                                $fmButton.html("<span>" + $fmButton.text() + "</span><span class=\"" + $.jgrid.icons.getClass("formSave") + "\"></span>");
+                            }
                         } else if ($this.hasClass("ui-icon-close")) {
-                            $this.closest(".EditButton").css("float", "right");
-                            $fmButton.removeClass("fm-button-icon-left")
-                                .addClass("fm-button-icon-right")
-                                .html("<span class=\"" + $.jgrid.icons.form.undo + "\"></span><span>" + $fmButton.text() + "</span>");
+                            //$this.closest(".EditButton").css("float", "right");
+                            if ($fmButton.hasClass("fm-button-icon-right")) {
+                                $fmButton.html("<span>" + $fmButton.text() + "</span><span class=\"" + $.jgrid.icons.getClass("formUndo") + "\"></span>");
+                            } else {
+                                $fmButton.html("<span>" + $fmButton.text() + "</span><span class=\"" + $.jgrid.icons.getClass("formUndo") + "\"></span>");
+                            }
                         }
 
                     });
@@ -172,11 +175,11 @@
                     if (this.p.fontAwesomeIcons) {
                         $icon = $(this).closest(".ui-jqgrid").find(".ui-jqgrid-titlebar>.ui-jqgrid-titlebar-close>span");
                         if (gridstate === "visible") {
-                            $icon.removeClass("ui-icon ui-icon-circle-triangle-n fa-arrow-circle-down")
-                                .addClass($.jgrid.icons.titleVisibleGrid).parent().addClass($.jgrid.icons.titleIcon);
+                            $icon.removeClass("ui-icon ui-icon-circle-triangle-n ui-icon-circle-triangle-s " + $.jgrid.icons.getClass("titleHiddenGrid"))
+                                .addClass($.jgrid.icons.getClass("titleVisibleGrid")).parent().addClass($.jgrid.icons.getClass("titleIcon"));
                         } else if (gridstate === "hidden") {
-                            $icon.removeClass("ui-icon ui-icon-circle-triangle-n fa-arrow-circle-up")
-                                .addClass($.jgrid.icons.titleHiddenGrid).parent().addClass($.jgrid.icons.titleIcon);
+                            $icon.removeClass("ui-icon ui-icon-circle-triangle-n ui-icon-circle-triangle-s " + $.jgrid.icons.getClass("titleVisibleGrid"))
+                                .addClass($.jgrid.icons.getClass("titleHiddenGrid")).parent().addClass($.jgrid.icons.getClass("titleIcon"));
                         }
                     }
                 }).bind("jqGridInitGrid", function () {
@@ -186,30 +189,30 @@
                         $pager = $this.closest(".ui-jqgrid").find(".ui-pg-table");
                         $pager.find(".ui-pg-button>span.ui-icon-seek-first")
                             .removeClass("ui-icon ui-icon-seek-first")
-                            .addClass($.jgrid.icons.pager.first);
+                            .addClass($.jgrid.icons.getClass("pagerFirst"));
                         $pager.find(".ui-pg-button>span.ui-icon-seek-prev")
                             .removeClass("ui-icon ui-icon-seek-prev")
-                            .addClass($.jgrid.icons.pager.prev);
+                            .addClass($.jgrid.icons.getClass("pagerPrev"));
                         $pager.find(".ui-pg-button>span.ui-icon-seek-next")
                             .removeClass("ui-icon ui-icon-seek-next")
-                            .addClass($.jgrid.icons.pager.next);
+                            .addClass($.jgrid.icons.getClass("pagerNext"));
                         $pager.find(".ui-pg-button>span.ui-icon-seek-end")
                             .removeClass("ui-icon ui-icon-seek-end")
-                            .addClass($.jgrid.icons.pager.last);
+                            .addClass($.jgrid.icons.getClass("pagerLast"));
 
                         $this.closest(".ui-jqgrid")
                             .find(".ui-jqgrid-titlebar>.ui-jqgrid-titlebar-close>.ui-icon-circle-triangle-n")
                             .removeClass("ui-icon ui-icon-circle-triangle-n")
-                            .addClass("fa fa-arrow-circle-up").parent().addClass("ui-corner-all fa-title");
+                            .addClass($.jgrid.icons.getClass("titleVisibleGrid")).parent().addClass("ui-corner-all " + $.jgrid.icons.getClass("titleIcon"));
 
                         $sortables = $this.closest(".ui-jqgrid")
                                 .find(".ui-jqgrid-htable .ui-jqgrid-labels .ui-jqgrid-sortable span.s-ico");
                         $sortables.find(">span.ui-icon-triangle-1-s")
                             .removeClass("ui-icon ui-icon-triangle-1-s")
-                            .addClass("fa fa-sort-asc fa-lg");
+                            .addClass($.jgrid.icons.getClass("sortAsc"));
                         $sortables.find(">span.ui-icon-triangle-1-n")
                             .removeClass("ui-icon ui-icon-triangle-1-n")
-                            .addClass("fa fa-sort-desc fa-lg");
+                            .addClass($.jgrid.icons.getClass("sortDesc"));
                     }
                 });
             });
