@@ -145,6 +145,7 @@ $.jgrid.extend({
 					alert("Multiselect plugin loaded after jqGrid. Please load the plugin before the jqGrid!");
 					return;
 				}
+				// ??? the next line uses $.ui.multiselect.defaults which will be typically undefined
 				opts.msel_opts = $.extend($.ui.multiselect.defaults, opts.msel_opts);
 			}
 		}

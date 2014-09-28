@@ -176,6 +176,13 @@
                     }
                 }).bind("jqGridInitGrid", function () {
                     var $this = $(this), $pager, $sortables;
+                    
+                    $this.closest(".ui-jqgrid-view")
+                        .find(">.ui-jqgrid-toppager")
+                        .removeClass("ui-state-default")
+                        .addClass("ui-widget-content")
+                        .find(">.ui-pager-control")
+                        .addClass("ui-state-default");
 
                     if (this.p.fontAwesomeIcons) {
                         $pager = $this.closest(".ui-jqgrid").find(".ui-pg-table");

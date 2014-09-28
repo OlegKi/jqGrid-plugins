@@ -27,7 +27,7 @@
     width: auto; /* ovewrite 19px used by jqGrid */
     height: auto;/* ovewrite 18px used by jqGrid */
     padding: 0px;
-    margin-top: -0.1em;
+    margin-top: -0.2em;
     top: auto;
     right: 0.3em;
 }
@@ -50,13 +50,14 @@
 }
 .ui-jqdialog .ui-jqdialog-titlebar-close:hover, .ui-jqgrid-titlebar .ui-jqdialog-titlebar-close:hover {
     text-decoration: none;
+    margin-top: -0.8em; /* -0.9px */
 }
 .ui-jqgrid .ui-jqgrid-titlebar-close.fa-title span {
     margin-top: 0.1em
 }
 .ui-jqgrid .ui-jqgrid-titlebar-close.fa-title.ui-state-hover {
     right: 0.1em;
-    margin-top: -0.2em
+    margin-top: -0.3em
 }
 .ui-jqgrid .ui-jqgrid-titlebar-close.fa-title.ui-state-hover span {
     margin: 0.0 0.1em;

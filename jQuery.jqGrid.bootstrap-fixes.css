@@ -1,0 +1,67 @@
+/**
+ * Copyright (c) 2013, Oleg Kiriljuk, oleg.kiriljuk@ok-soft-gmbh.com
+ * Dual licensed under the MIT and GPL licenses
+ * http://www.opensource.org/licenses/mit-license.php
+ * http://www.gnu.org/licenses/gpl-2.0.html
+ * Date: 2014-09-28
+ * see http://stackoverflow.com/a/20165553/315935 for more details
+ */
+.ui-jqgrid .ui-pg-table .ui-pg-input, .ui-jqgrid .ui-pg-table .ui-pg-selbox {
+    height: auto;
+    width: auto;
+    line-height: inherit;
+}
+.ui-jqgrid .ui-pg-table .ui-pg-selbox {
+    padding: 1px;
+}
+.ui-jqgrid div {
+    line-height: normal;
+}
+.ui-jqgrid table {
+    border-collapse: separate;
+    border-style: none;
+}
+.ui-paging-info {
+    display: inline;
+}
+div.ui-jqgrid-view table.ui-jqgrid-btable td {
+    border-left-style: none
+}
+div.ui-jqgrid-view table.ui-jqgrid-btable th {
+    border-left-style: none
+}
+.ui-jqgrid .ui-jqgrid-htable th {
+    height: auto;
+}
+.ui-jqgrid .ui-jqgrid-htable th div {
+    margin: 4px 2px;
+    height: auto;
+}
+.ui-jqgrid .ui-jqgrid-resize {
+    height: 18px !important;
+}
+.ui-jqgrid .ui-pg-table {
+    padding-bottom: 0;
+}
+.ui-jqgrid>.ui-jqgrid-pager {
+    height: auto;
+    border-top-style: none;
+    border-right-color: inherit !important;
+    border-right-style: solid !important;
+    border-right-width: 1px !important;
+}
+.ui-jqgrid .ui-jqgrid-toppager {
+     height: auto !important;
+}
+.ui-jqgrid-toppager .ui-pager-control, .ui-jqgrid-pager .ui-pager-control {
+    border-left: 0;
+    border-bottom: 0;
+    border-top: 0;
+}
+.ui-jqgrid .ui-jqgrid-hdiv {
+    height: auto;
+    overflow-y: hidden;
+}
+.ui-jqgrid .ui-pg-button  {
+    height: auto !important;
+}
