@@ -84,7 +84,6 @@
                 } else if ($this.hasClass("ui-icon-close")) {
                     $fmButton.html("<span class=\"" + $.jgrid.icons.getClass("close") + "\"></span><span>" + $fmButton.text() + "</span>");
                 }
-
             });
         }
     });
@@ -160,7 +159,6 @@
                                 $fmButton.html("<span>" + $fmButton.text() + "</span><span class=\"" + $.jgrid.icons.getClass("formUndo") + "\"></span>");
                             }
                         }
-
                     });
                 }).bind("jqGridHeaderClick", function (e, gridstate) {
                     var $icon;
