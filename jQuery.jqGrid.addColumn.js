@@ -85,7 +85,11 @@
                         $th.appendTo(rows[i]);
                         grid.headers.push({ el: $th[0], width: cmNew.width, widthOrg: cmNew.width });
                     } else {
-                        $th.insertAfter(rows[i].cells[iCol + iOffset - 1]);
+                        if (iCol + iOffset >= 1) {
+                            $th.insertAfter(rows[i].cells[iCol + iOffset - 1]);
+                        } else {
+                            $th.insertBefore(rows[i].cells[iCol + iOffset]);
+                        }
                         grid.headers.splice(iCol + iOffset, 0, { el: $th[0], width: cmNew.width, widthOrg: cmNew.width });
                     }
                 }
@@ -125,8 +129,10 @@
                     }
                     if (iCol === undefined) {
                         $td.appendTo($row);
-                    } else {
+                    } else if (iCol + iOffset >= 1) {
                         $td.insertAfter(rows[i].cells[iCol + iOffset - 1]);
+                    } else {
+                        $td.insertBefore(rows[i].cells[iCol + iOffset]);
                     }
                 }
                 if (adjustGridWidth !== false) {
