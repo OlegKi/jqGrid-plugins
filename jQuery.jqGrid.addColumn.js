@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2013, Dr. Oleg Kiriljuk, oleg.kiriljuk@ok-soft-gmbh.com
+ * Copyright (c) 2014, Dr. Oleg Kiriljuk, oleg.kiriljuk@ok-soft-gmbh.com
  * Dual licensed under the MIT and GPL licenses
  * http://www.opensource.org/licenses/mit-license.php
  * http://www.gnu.org/licenses/gpl-2.0.html
@@ -14,7 +14,6 @@
     "use strict";
     $.jgrid.extend({
         addColumn: function (options) {
-            "use strict";
             var cmNew = options.cm, iCol = options.insertWithColumnIndex, columnData = options.data;
             return this.each(function () {
                 var $self = $(this), grid = this.grid, p = this.p, colModel = p.colModel, idPrefix = p.idPrefix,
@@ -86,7 +85,7 @@
                         $th.appendTo(rows[i]);
                         grid.headers.push({ el: $th[0], width: cmNew.width, widthOrg: cmNew.width });
                     } else {
-                        $th.insertAfter(rows[i].cells[iCol + iOffset-1]);
+                        $th.insertAfter(rows[i].cells[iCol + iOffset - 1]);
                         grid.headers.splice(iCol + iOffset, 0, { el: $th[0], width: cmNew.width, widthOrg: cmNew.width });
                     }
                 }
@@ -127,7 +126,7 @@
                     if (iCol === undefined) {
                         $td.appendTo($row);
                     } else {
-                        $td.insertAfter(rows[i].cells[iCol + iOffset-1]);
+                        $td.insertAfter(rows[i].cells[iCol + iOffset - 1]);
                     }
                 }
                 if (adjustGridWidth !== false) {
