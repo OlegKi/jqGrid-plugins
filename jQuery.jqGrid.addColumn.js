@@ -9,7 +9,7 @@
  */
 
 /*global jQuery */
-/*jslint plusplus: true, eqeq: true, todo: true */
+/*jslint plusplus: true, eqeq: true, todo: true, continue: true */
 (function ($) {
     "use strict";
     $.jgrid.extend({
@@ -127,7 +127,7 @@
                             cellProp + '>' + formattedCellValue + '</td>');
                     } else if ($row.hasClass("jqgroup") || $row.hasClass("ui-subgrid")) {
                         $td = $row.find(">td[colspan]");
-                        $td.attr("colspan", parseInt($td.attr("colspan")) + 1);
+                        $td.attr("colspan", parseInt($td.attr("colspan"), 10) + 1);
                         continue;
                     } else if ($row.hasClass("jqfoot")) {
                         continue;
