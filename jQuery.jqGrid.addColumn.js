@@ -125,14 +125,15 @@
 
                         $td = $('<td role="gridcell" aria-describedby="list_total" ' +
                             cellProp + '>' + formattedCellValue + '</td>');
+                    } else if ($row.hasClass("jqgfirstrow")) {
+                        $td = $('<td role="gridcell" style="width: ' + cmNew.width + 'px; height: 0px;"></td>');
                     } else if ($row.hasClass("jqgroup") || $row.hasClass("ui-subgrid")) {
                         $td = $row.find(">td[colspan]");
                         $td.attr("colspan", parseInt($td.attr("colspan"), 10) + 1);
                         continue;
-                    } else if ($row.hasClass("jqfoot")) {
+                    }
+                    if ($row.hasClass("jqfoot")) { // grouping summary row
                         continue;
-                    } else if ($row.hasClass("jqgfirstrow")) {
-                        $td = $('<td role="gridcell" style="width: ' + cmNew.width + 'px; height: 0px;"></td>');
                     }
                     if (iCol === undefined) {
                         $td.appendTo($row);
