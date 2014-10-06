@@ -1,0 +1,165 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>example which demonstrates addColumn method</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="author" content="Oleg Kiriljuk"/>
+    <link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/themes/redmond/jquery-ui.css"/>
+    <link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/jqgrid/4.6.0/css/ui.jqgrid.css"/>
+    <style type="text/css">
+        html, body { font-size: 75%; }
+    </style>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jqgrid/4.6.0/js/i18n/grid.locale-en.js"></script>
+    <script type="text/javascript">
+        $.jgrid.no_legacy_api = true;
+        $.jgrid.useJSON = true;
+    </script>
+    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jqgrid/4.6.0/js/jquery.jqGrid.src.js"></script>
+    <script type="text/javascript" src="http://www.ok-soft-gmbh.com/jqGrid/jquery.jqGrid-4.6.0/plugins/jQuery.jqGrid.addColumn.js"></script>
+    <script type="text/javascript">
+    //<![CDATA[
+        /*global $ */
+        /*jslint devel: true, browser: true, plusplus: true, nomen: true, unparam: true */
+        $(document).ready(function () {
+            "use strict";
+            var mydata = [
+                    { id: "10",  invdate: "2007-10-01", name: "test1", note: "note1",  amount: "200.00", tax: "10.00", closed: true,  ship_via: "TN", total: "210.00" },
+                    { id: "20",  invdate: "2007-10-02", name: "test1", note: "note2",  amount: "300.00", tax: "20.00", closed: false, ship_via: "FE", total: "320.00" },
+                    { id: "30",  invdate: "2007-09-01", name: "test3", note: "note3",  amount: "400.00", tax: "30.00", closed: false, ship_via: "FE", total: "430.00" },
+                    { id: "40",  invdate: "2007-10-04", name: "test2", note: "note4",  amount: "200.00", tax: "10.00", closed: true,  ship_via: "TN", total: "210.00" },
+                    { id: "50",  invdate: "2007-10-31", name: "test2", note: "note5",  amount: "300.00", tax: "20.00", closed: false, ship_via: "FE", total: "320.00" },
+                    { id: "60",  invdate: "2007-09-06", name: "test3", note: "note6",  amount: "400.00", tax: "30.00", closed: false, ship_via: "FE", total: "430.00" },
+                    { id: "70",  invdate: "2007-10-04", name: "test3", note: "note7",  amount: "200.00", tax: "10.00", closed: true,  ship_via: "TN", total: "210.00" },
+                    { id: "80",  invdate: "2007-10-03", name: "test1", note: "note8",  amount: "300.00", tax: "20.00", closed: false, ship_via: "FE", total: "320.00" },
+                    { id: "90",  invdate: "2007-09-01", name: "test3", note: "note9",  amount: "400.00", tax: "30.00", closed: false, ship_via: "TN", total: "430.00" },
+                    { id: "100", invdate: "2007-09-08", name: "test2", note: "note10", amount: "500.00", tax: "30.00", closed: true,  ship_via: "TN", total: "530.00" },
+                    { id: "110", invdate: "2007-09-08", name: "test2", note: "note11", amount: "500.00", tax: "30.00", closed: false, ship_via: "FE", total: "530.00" },
+                    { id: "120", invdate: "2007-09-10", name: "test3", note: "note12", amount: "500.00", tax: "30.00", closed: false, ship_via: "FE", total: "530.00" }
+                ],
+                $grid = $("#list"),
+                initDateEdit = function (elem) {
+                    $(elem).datepicker({
+                        dateFormat: "dd-M-yy",
+                        autoSize: true,
+                        changeYear: true,
+                        changeMonth: true,
+                        showButtonPanel: true,
+                        showWeek: true
+                    });
+                },
+                initDateSearch = function (elem) {
+                    var $self = $(this);
+                    setTimeout(function () {
+                        $(elem).datepicker({
+                            dateFormat: "dd-M-yy",
+                            autoSize: true,
+                            changeYear: true,
+                            changeMonth: true,
+                            showWeek: true,
+                            showButtonPanel: true,
+                            onSelect: function () {
+                                if (this.id.substr(0, 3) === "gs_") {
+                                    // call triggerToolbar only in case of searching toolbar
+                                    setTimeout(function () {
+                                        $self[0].triggerToolbar();
+                                    }, 100);
+                                }
+                            }
+                        });
+                    }, 100);
+                },
+                numberTemplate = {formatter: "number", align: "right", sorttype: "number",
+                    editrules: {number: true},
+                    searchoptions: { sopt: ["eq", "ne", "lt", "le", "gt", "ge", "nu", "nn", "in", "ni"] }};
+
+            $grid.jqGrid({
+                datatype: "local",
+                data: mydata,
+                colNames: ["Client", "Date", "Closed", "Shipped via", "Notes", "Tax", "Amount", "Total"],
+                colModel: [
+                    { name: "name", align: "center", editable: true, width: 65, editrules: {required: true} },
+                    { name: "invdate", width: 80, align: "center", sorttype: "date",
+                        formatter: "date", formatoptions: { newformat: "d-M-Y" }, editable: true, datefmt: "d-M-Y",
+                        editoptions: { dataInit: initDateEdit },
+                        searchoptions: { sopt: ["eq", "ne", "lt", "le", "gt", "ge"], dataInit: initDateSearch } },
+                    { name: "closed", width: 70, align: "center", editable: true, formatter: "checkbox",
+                        edittype: "checkbox", editoptions: {value: "Yes:No", defaultValue: "Yes"},
+                        stype: "select", searchoptions: { sopt: ["eq", "ne"], value: ":Any;true:Yes;false:No" } },
+                    { name: "ship_via", width: 105, align: "center", editable: true, formatter: "select",
+                        edittype: "select", editoptions: { value: "FE:FedEx;TN:TNT;IN:Intim", defaultValue: "IN" },
+                        stype: "select", searchoptions: { sopt: ["eq", "ne"], value: ":Any;FE:FedEx;TN:TNT;IN:IN" } },
+                    { name: "note", width: 60, sortable: false, editable: true, edittype: "textarea" },
+                    { name: "tax", width: 52, editable: true, template: numberTemplate, hidden: true  },
+                    { name: "amount", width: 75, editable: true, template: numberTemplate },
+                    { name: "total", width: 60, template: numberTemplate }
+                ],
+                rowNum: 10,
+                idPrefix: "a",
+                //direction: "rtl",
+                rowList: [5, 10, 20],
+                pager: "#pager",
+                toppager: true,
+                gridview: true,
+                autoencode: true,
+                ignoreCase: true,
+                sortname: "name",
+                viewrecords: true,
+                sortorder: "desc",
+                footerrow: true,
+                //grouping: true,
+                //direction: "rtl",
+                subGrid: true,
+                groupingView: {
+                    groupField: ["name"],
+                    groupCollapse: false,
+                    groupColumnShow: [true]
+                },
+                //rownumbers: true,
+                shrinkToFit: false,
+                height: "auto"
+            });
+            // set your defaults for Advanced Searching or filterToolbar
+            $.extend($.jgrid.search, {
+                multipleSearch: true,
+                multipleGroup: true,
+                recreateFilter: true,
+                closeOnEscape: true,
+                closeAfterSearch: true,
+                closeAfterReset: true,
+                searchOnEnter: true,
+                showQuery: true,
+                overlay: 0,
+                stringResult: true,
+                defaultSearch: 'cn'
+            });
+            $grid.jqGrid("navGrid", "#pager", {add: false, edit: true, del: false, search: false, refresh: false, view: true, cloneToTop: true});
+            $grid.jqGrid("addColumn", {
+                cm: {name: "sent", width: 70, label: "Sent", formatter: "checkbox", align: "center", cellattr: function() { return ' title="Is sent?"'; }},
+                //insertWithColumnIndex: 3,
+                data: {
+                    "10": true,
+                    "20": false,
+                    "30": true,
+                    "40": false,
+                    "50": true,
+                    "60": false,
+                    "70": true,
+                    "80": false,
+                    "90": true,
+                    "100": false,
+                    "110": true,
+                    "120": false
+                }
+            });
+        });
+    //]]>
+    </script>
+</head>
+<body>
+    <table id="list"><tr><td></td></tr></table>
+    <div id="pager"></div>
+</body>
+</html>

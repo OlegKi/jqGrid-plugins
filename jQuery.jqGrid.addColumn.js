@@ -21,6 +21,9 @@
                     $htable = p.direction === "ltr" ?
                             $(grid.hDiv).find(">.ui-jqgrid-hbox>table.ui-jqgrid-htable") :
                             $(grid.hDiv).find(">.ui-jqgrid-hbox-rtl>table.ui-jqgrid-htable"),
+                    $ftableRows = p.direction === "ltr" ?
+                            $(grid.sDiv).find(">.ui-jqgrid-hbox>table.ui-jqgrid-ftable tr.footrow") :
+                            $(grid.sDiv).find(">.ui-jqgrid-hbox-rtl>table.ui-jqgrid-ftable tr.footrow"),
                     iOffset = (p.multiselect === true ? 1 : 0) + (p.subGrid === true ? 1 : 0) + (p.rownumbers === true ? 1 : 0),
                     adjustGridWidth = function () {
                         var $this = $(this),
@@ -49,6 +52,8 @@
                         $parent.find(">.ui-jqgrid-pager").width(w);
                         $parent.width($this.outerWidth(false));
                     };
+
+                $self.triggerHandler("jqGridBeforeAddColumn", [options]);
 
                 // update colModel
                 if (cmNew.index === undefined) {
@@ -97,7 +102,6 @@
                 rows = this.rows;
                 // append the column in the body
                 for (i = 0; i < rows.length; i++) {
-                    // TODO: support subgrids, grouping,
                     // TODO: insert not at the end of row in case of TreeGrid
                     // TODO: support of frozen columns
                     $row = $(rows[i]);
@@ -121,9 +125,12 @@
 
                         $td = $('<td role="gridcell" aria-describedby="list_total" ' +
                             cellProp + '>' + formattedCellValue + '</td>');
-                    /*} else if ($row.hasClass("ui-subgrid")) {
-                    } else if ($row.hasClass("jqgroup")) {
-                    } else if ($row.hasClass("jqfoot")) {*/
+                    } else if ($row.hasClass("jqgroup") || $row.hasClass("ui-subgrid")) {
+                        $td = $row.find(">td[colspan]");
+                        $td.attr("colspan", parseInt($td.attr("colspan")) + 1);
+                        continue;
+                    } else if ($row.hasClass("jqfoot")) {
+                        continue;
                     } else if ($row.hasClass("jqgfirstrow")) {
                         $td = $('<td role="gridcell" style="width: ' + cmNew.width + 'px; height: 0px;"></td>');
                     }
@@ -135,11 +142,31 @@
                         $td.insertBefore(rows[i].cells[iCol + iOffset]);
                     }
                 }
+
+                if ($ftableRows.length > 0) {
+                    // append the column in the body
+                    for (i = 0; i < $ftableRows.length; i++) {
+                        pos = iCol === undefined ? $ftableRows[i].cells.length : iCol + iOffset;
+                        $td = $("<td role='gridcell' " + this.formatCol(pos, 0, "", null, "", false) + ">&#160;</td>");
+                        if (iCol === undefined) {
+                            $td.appendTo($ftableRows[i]);
+                        } else if (iCol + iOffset >= 1) {
+                            $td.insertAfter($ftableRows[i].cells[iCol + iOffset - 1]);
+                        } else {
+                            $td.insertBefore($ftableRows[i].cells[iCol + iOffset]);
+                        }
+                    }
+                }
+
                 if (adjustGridWidth !== false) {
                     $self.jqGrid("setGridWidth", p.width + $td.outerWidth(), false);
                     adjustGridWidth.call(this);
                 }
-                // todo destroy hidden editform if any exists
+
+                // destroy search form, edit form, view form, delete form if any exists (probably hidden)
+                $("#searchmodfbox_" + this.id + ",#editmod" + this.id + ",#viewmod" + this.id + ",#delmod" + this.id).remove();
+
+                $self.triggerHandler("jqGridAfterAddColumn", [options]);
             });
         }
     });

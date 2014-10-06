@@ -1,0 +1,105 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>http://stackoverflow.com/q/10163970/315935</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="author" content="Oleg Kiriljuk"/>
+    <link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/themes/redmond/jquery-ui.css"/>
+    <link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/jqgrid/4.6.0/css/ui.jqgrid.css"/>
+    <style type="text/css">
+        html, body { font-size: 75%; }
+    </style>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jqgrid/4.6.0/js/i18n/grid.locale-en.js"></script>
+    <script type="text/javascript">
+        $.jgrid.no_legacy_api = true;
+        $.jgrid.useJSON = true;
+    </script>
+    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jqgrid/4.6.0/js/jquery.jqGrid.src.js"></script>
+    <script type="text/javascript" src="http://www.ok-soft-gmbh.com/jqGrid/jquery.jqGrid-4.6.0/plugins/jQuery.jqGrid.addColumn.js"></script>
+    <script type="text/javascript">
+    //<![CDATA[
+        /*global $ */
+        /*jslint browser: true */
+        $(function () {
+            "use strict";
+            var myGridData = [
+                    // main grid data
+                    {id: "10", col1: "11", col2: "12",
+                        subgrid: [
+                            // data for subgrid for the id=m1
+                            {id: "a", c1: "aa", c2: "ab", c3: "ac"},
+                            {id: "b", c1: "ba", c2: "bb", c3: "bc"},
+                            {id: "c", c1: "ca", c2: "cb", c3: "cc"}
+                        ]
+                    },
+                    {id: "20", col1: "21", col2: "22",
+                        subgrid: [
+                            {id: "a", c1: "xx", c2: "xy", c3: "xz"}
+                        ]
+                    }
+                ],
+                $grid = $("#list");
+
+            $grid.jqGrid({
+                datatype: "local",
+                data: myGridData,
+                colNames: ["Column 1", "Column 2"],
+                colModel: [
+                    { name: "col1", width: 200 },
+                    { name: "col2", width: 200 }
+                ],
+                gridview: true,
+                autoencode: true,
+                sortname: "col1",
+                sortorder: "desc",
+                height: "auto",
+                pager: "#pager",
+                idPrefix: "m_",
+                caption: "Demonstrate how to create subgrid from local data",
+                subGrid: true,
+                subGridRowExpanded: function (subgridDivId, rowId) {
+                    var subgridTableId = subgridDivId + "_t",
+                        subgridData = $(this).jqGrid("getLocalRow", rowId).subgrid,
+                        idPrefixMain = $(this).jqGrid("getGridParam", "idPrefix");
+                    $("#" + subgridDivId).html("<table id='" + subgridTableId + "'></table>");
+                    $("#" + subgridTableId).jqGrid({
+                        datatype: "local",
+                        data: subgridData,
+                        colNames: ["Col 1", "Col 2", "Col 3"],
+                        colModel: [
+                            { name: "c1", width: 100 },
+                            { name: "c2", width: 100 },
+                            { name: "c3", width: 100 }
+                        ],
+                        gridview: true,
+                        rownumbers: true,
+                        autoencode: true,
+                        //autowidth: true,
+                        idPrefix: "s" + $.jgrid.stripPref(idPrefixMain, rowId) + "_",
+                        sortname: "col1",
+                        sortorder: "desc",
+                        height: "auto"
+                    });
+                }
+            });
+            $grid.jqGrid("expandSubGridRow", "m_10");
+            $grid.jqGrid("addColumn", {
+                cm: {name: "sent", width: 70, label: "Sent", formatter: "checkbox", align: "center", cellattr: function() { return ' title="Is sent?"'; }},
+                //insertWithColumnIndex: 3,
+                data: {
+                    "10": true,
+                    "20": false
+                }
+            });
+        });
+    //]]>
+    </script>
+</head>
+<body>
+    <table id="list"><tr><td></td></tr></table>
+    <div id="pager"></div>
+</body>
+</html>
