@@ -80,8 +80,8 @@
                 data: mydata,
                 colNames: ["Client", "Date", "Closed", "Shipped via", "Notes", "Tax", "Amount", "Total"],
                 colModel: [
-                    { name: "name", align: "center", editable: true, width: 65, editrules: {required: true} },
-                    { name: "invdate", width: 80, align: "center", sorttype: "date",
+                    { name: "name", align: "center", editable: true, width: 65, editrules: {required: true}, frozen: true },
+                    { name: "invdate", width: 80, align: "center", sorttype: "date", frozen: true,
                         formatter: "date", formatoptions: { newformat: "d-M-Y" }, editable: true, datefmt: "d-M-Y",
                         editoptions: { dataInit: initDateEdit },
                         searchoptions: { sopt: ["eq", "ne", "lt", "le", "gt", "ge"], dataInit: initDateSearch } },
@@ -97,7 +97,8 @@
                     { name: "total", width: 60, template: numberTemplate }
                 ],
                 rowNum: 10,
-                idPrefix: "a",
+                //idPrefix: "a",
+                direction: "rtl",
                 rowList: [5, 10, 20],
                 pager: "#pager",
                 toppager: true,
@@ -107,18 +108,10 @@
                 sortname: "name",
                 viewrecords: true,
                 sortorder: "desc",
-                grouping: true,
-                //direction: "rtl",
-                groupingView: {
-                    groupField: ["name"],
-                    groupCollapse: false,
-                    groupSummary: [true],
-                    groupSummaryPos: ["footer"], // header or footer
-                    groupColumnShow: [true]
-                },
                 //rownumbers: true,
                 shrinkToFit: false,
-                height: "auto"
+                height: "auto",
+                width: 500
             });
             // set your defaults for Advanced Searching or filterToolbar
             $.extend($.jgrid.search, {
@@ -134,10 +127,13 @@
                 stringResult: true,
                 defaultSearch: 'cn'
             });
+            $grid.jqGrid("setFrozenColumns");
+            $grid.triggerHandler("jqGridAfterGridComplete"); // to fix setFrozenColumns with local data
             $grid.jqGrid("navGrid", "#pager", {add: false, edit: true, del: false, search: false, refresh: false, view: true, cloneToTop: true});
-            $grid.jqGrid("addColumn", {
+            /*$grid.jqGrid("addColumn", {
                 cm: {name: "sent", width: 70, label: "Sent", formatter: "checkbox", align: "center", cellattr: function() { return ' title="Is sent?"'; }},
-                //insertWithColumnIndex: 3,
+                insertWithColumnIndex: 3,
+                adjustGridWidth: false,
                 data: {
                     "10": true,
                     "20": false,
@@ -152,7 +148,7 @@
                     "110": true,
                     "120": false
                 }
-            });
+            });*/
         });
     //]]>
     </script>

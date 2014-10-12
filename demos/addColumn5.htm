@@ -98,7 +98,6 @@
                 ],
                 rowNum: 10,
                 idPrefix: "a",
-                //direction: "rtl",
                 rowList: [5, 10, 20],
                 pager: "#pager",
                 toppager: true,
@@ -138,7 +137,9 @@
             $grid.jqGrid("navGrid", "#pager", {add: false, edit: true, del: false, search: false, refresh: false, view: true, cloneToTop: true});
             $grid.jqGrid("addColumn", {
                 cm: {name: "sent", width: 70, label: "Sent", formatter: "checkbox", align: "center", cellattr: function() { return ' title="Is sent?"'; }},
-                insertWithColumnIndex: 3,
+                //insertWithColumnIndex: 3,
+                formatFooter: true,
+                footerData: true,
                 data: {
                     "10": true,
                     "20": false,

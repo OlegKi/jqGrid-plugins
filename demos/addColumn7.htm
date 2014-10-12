@@ -1,0 +1,90 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>http://stackoverflow.com/q/9480708/315935</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="author" content="Oleg Kiriljuk"/>
+    <link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/themes/redmond/jquery-ui.css"/>
+    <link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/jqgrid/4.6.0/css/ui.jqgrid.css"/>
+    <style type="text/css">
+        html, body { font-size: 75%; }
+    </style>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jqgrid/4.6.0/js/i18n/grid.locale-en.js"></script>
+    <script type="text/javascript">
+        $.jgrid.no_legacy_api = true;
+        $.jgrid.useJSON = true;
+    </script>
+    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jqgrid/4.6.0/js/jquery.jqGrid.src.js"></script>
+    <script type="text/javascript" src="http://www.ok-soft-gmbh.com/jqGrid/jquery.jqGrid-4.6.0/plugins/jQuery.jqGrid.addColumn.js"></script>
+    <script type="text/javascript">
+    //<![CDATA[
+        /*global $ */
+        /*jslint browser: true, nomen: true */
+        $(function () {
+            "use strict";
+            var mydata = [
+                    {id: "10", name: "Cash",        num: "100", debit: "400.00",  credit: "250.00",  balance: "150.00",   enbl: "1", level: "0", parent: "null", isLeaf: false, expanded: true,  loaded: true},
+                    {id: "20", name: "Cash 1",      num: "1",   debit: "300.00",  credit: "200.00",  balance: "100.00",   enbl: "0", level: "1", parent: "10",   isLeaf: false, expanded: true,  loaded: true},
+                    {id: "30", name: "Sub Cash 1",  num: "1",   debit: "300.00",  credit: "200.00",  balance: "100.00",   enbl: "1", level: "2", parent: "20",   isLeaf: true,  expanded: false, loaded: true, icon: "ui-icon-star"},
+                    {id: "40", name: "Cash 2",      num: "2",   debit: "100.00",  credit: "50.00",   balance: "50.00",    enbl: "0", level: "1", parent: "10",   isLeaf: true,  expanded: false, loaded: true, icon: "ui-icon-flag"},
+                    {id: "50", name: "Bank\'s",     num: "200", debit: "1500.00", credit: "1000.00", balance: "500.00",   enbl: "1", level: "0", parent: "null", isLeaf: false, expanded: false, loaded: true},
+                    {id: "60", name: "Bank 1",      num: "1",   debit: "500.00",  credit: "0.00",    balance: "500.00",   enbl: "0", level: "1", parent: "50",   isLeaf: true,  expanded: false, loaded: true, icon: "ui-icon-home"},
+                    {id: "70", name: "Bank 2",      num: "2",   debit: "1000.00", credit: "1000.00", balance: "0.00",     enbl: "1", level: "1", parent: "50",   isLeaf: true,  expanded: false, loaded: true, icon: "ui-icon-suitcase"},
+                    {id: "80", name: "Fixed asset", num: "300", debit: "0.00",    credit: "1000.00", balance: "-1000.00", enbl: "0", level: "0", parent: "null", isLeaf: true,  expanded: false, loaded: true, icon: "ui-icon-lightbulb"}
+                ],
+                $grid = $("#treegrid");
+
+            $grid.jqGrid({
+                datatype: "jsonstring",
+                datastr: mydata,
+                colNames: ["Account", "Acc Num", "Debit", "Credit", "Balance", "Enabled"],
+                colModel: [
+                    {name: "name", width: 180},
+                    {name: "num", width: 80, formatter: "integer", sorttype: "int", align: "center"},
+                    {name: "debit", width: 80, formatter: "number", sorttype: "number", align: "right"},
+                    {name: "credit", width: 80, formatter: "number", sorttype: "number", align: "right"},
+                    {name: "balance", width: 80, formatter: "number", sorttype: "number", align: "right"},
+                    {name: "enbl", width: 70, align: "center", formatter: "checkbox", editoptions: {value: "1:0"}}
+                ],
+                height: "auto",
+                gridview: true,
+                rowNum: 10000,
+                lastsort: "0",
+                treeGrid: true,
+                treeGridModel: "adjacency",
+                treedatatype: "local",
+                ExpandColumn: "name",
+                //cmTemplate: { align: "center" },
+                jsonReader: {
+                    repeatitems: false,
+                    root: function (obj) { return obj; },
+                    page: function () { return 1; },
+                    total: function () { return 1; },
+                    records: function (obj) { return obj.length; }
+                }
+            });
+            $grid.jqGrid("addColumn", {
+                cm: {name: "sent", width: 70, label: "Sent", formatter: "checkbox", align: "center", cellattr: function() { return ' title="Is sent?"'; }},
+                //insertWithColumnIndex: 5,
+                data: {
+                    "10": true,
+                    "20": true,
+                    "30": false,
+                    "40": false,
+                    "50": true,
+                    "60": false,
+                    "70": true,
+                    "80": false
+                }
+            });
+        });
+    //]]>
+    </script>
+</head>
+<body>
+    <table id="treegrid"><tr><td></td></tr></table>
+</body>
+</html>
