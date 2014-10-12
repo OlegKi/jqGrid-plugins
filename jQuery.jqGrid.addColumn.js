@@ -14,16 +14,26 @@
     "use strict";
     $.jgrid.extend({
         addColumn: function (options) {
-            var cmNew = options.cm, iCol = options.insertWithColumnIndex, columnData = options.data;
+            // currently supported options: cm (REQUIRED), insertWithColumnIndex, data, footerData, formatFooter, adjustGridWidth
+            var cmNew = options.cm, iCol = options.insertWithColumnIndex, columnData = options.data, colTemplate;
+            if (cmNew == null) {
+                return; // error, probably can be changed to throwing of an exception
+            }
+            colTemplate = cmNew.template === "string" ?
+                    ($.jgrid.cmTemplate != null && typeof $.jgrid.cmTemplate[cmNew.template] === "object" ? $.jgrid.cmTemplate[cmNew.template] : {}) :
+                    cmNew.template;
             return this.each(function () {
-                var $self = $(this), grid = this.grid, p = this.p, colModel = p.colModel, idPrefix = p.idPrefix,
-                    i, rows, $row, $th, $td, rowid, id, formattedCellValue, pos, rawObject, rdata, cellProp, lastTh,
+                var $self = $(this), grid = this.grid, p = this.p, colModel = p.colModel, idPrefix = p.idPrefix, locid = "_id_",
+                    i, rows, $row, $th, $td, rowid, id, formattedCellValue, pos, rawObject, rdata, cellProp, thTemplate,
                     $htable = p.direction === "ltr" ?
                             $(grid.hDiv).find(">.ui-jqgrid-hbox>table.ui-jqgrid-htable") :
                             $(grid.hDiv).find(">.ui-jqgrid-hbox-rtl>table.ui-jqgrid-htable"),
                     $ftableRows = p.direction === "ltr" ?
                             $(grid.sDiv).find(">.ui-jqgrid-hbox>table.ui-jqgrid-ftable tr.footrow") :
                             $(grid.sDiv).find(">.ui-jqgrid-hbox-rtl>table.ui-jqgrid-ftable tr.footrow"),
+                    $fhtable = p.direction === "ltr" ?
+                            $(grid.fhDiv).find(">.ui-jqgrid-hbox>table.ui-jqgrid-htable") :
+                            $(grid.fhDiv).find(">.ui-jqgrid-hbox-rtl>table.ui-jqgrid-htable"),
                     iOffset = (p.multiselect === true ? 1 : 0) + (p.subGrid === true ? 1 : 0) + (p.rownumbers === true ? 1 : 0),
                     adjustGridWidth = function () {
                         var $this = $(this),
@@ -55,18 +65,34 @@
 
                 $self.triggerHandler("jqGridBeforeAddColumn", [options]);
 
-                // update colModel
+                cmNew = $.extend(true, {}, p.cmTemplate, colTemplate || {}, cmNew);
                 if (cmNew.index === undefined) {
                     cmNew.index = cmNew.name;
                 }
-                if (cmNew.sortable === undefined) {
+                if (typeof cmNew.sortable !== "boolean") {
                     cmNew.sortable = true;
                 }
+                if (typeof cmNew.title !== "boolean") {
+                    cmNew.title = true;
+                }
+                if (cmNew.resizable === undefined) {
+                    cmNew.resizable = true;
+                }
+                if (cmNew.hidden === undefined) {
+                    cmNew.hidden = false;
+                }
+                cmNew.width = cmNew.width === undefined ? 150 : parseInt(cmNew.width, 10);
+                cmNew.widthOrg = cmNew.width;
+                cmNew.lso = "";
                 // update colModel and colNames
-                if (iCol === undefined) {
+                if (iCol === undefined && p.treeGrid !== true) {
+                    iCol = colModel.length - 1 - iOffset;
                     colModel.push(cmNew);
                     p.colNames.push(cmNew.label || cmNew.name);
                 } else {
+                    if (iCol === undefined) { // p.treeGrid === true
+                        iCol = colModel.length - 6 - iOffset;
+                    }
                     colModel.splice(iCol + iOffset, 0, cmNew);
                     p.colNames.splice(iCol + iOffset, 0, cmNew.label || cmNew.name);
                 }
@@ -75,18 +101,19 @@
                 for (i = 0; i < rows.length; i++) {
                     // TODO: support of frozen columns
                     // TODO: support of grouping headers
-                    lastTh = grid.headers[grid.headers.length - 1].el;
-                    $th = $(lastTh).clone(true);
-                    $th.attr("id", this.id + "_" + cmNew.name);
+                    thTemplate = grid.headers[grid.headers.length - 1].el;
+                    $th = $(thTemplate).clone(true);
+                    $th.attr("id", p.id + "_" + cmNew.name);
+                    $th.css("display", cmNew.hidden === true ? "none" : "");
                     $th.html('<span class="ui-jqgrid-resize ui-jqgrid-resize-' + p.direction +
                         '" style="cursor: col-resize;">&nbsp;</span><div class="ui-th-div-ie ui-jqgrid-sortable" id="jqgh_' +
-                        this.id + "_" + cmNew.name + '">' +
+                        p.id + "_" + cmNew.name + '">' +
                         (cmNew.label || cmNew.name) +
                         '<span class="s-ico" style="display: none;"><span class="ui-grid-ico-sort ui-icon-asc ui-state-disabled ui-icon ui-icon-triangle-1-n ui-sort-' +
                         p.direction + '" sort="asc"></span><span class="ui-grid-ico-sort ui-icon-desc ui-state-disabled ui-icon ui-icon-triangle-1-s ui-sort-' +
                         p.direction + '" sort="desc"></span></span></div>');
                     $th.css("width", cmNew.width + "px");
-                    if (iCol === undefined) {
+                    if (iCol === colModel.length - 1) {
                         $th.appendTo(rows[i]);
                         grid.headers.push({ el: $th[0], width: cmNew.width, widthOrg: cmNew.width });
                     } else {
@@ -102,25 +129,30 @@
                 rows = this.rows;
                 // append the column in the body
                 for (i = 0; i < rows.length; i++) {
-                    // TODO: insert not at the end of row in case of TreeGrid
                     // TODO: support of frozen columns
                     $row = $(rows[i]);
-                    //row.insertCell(-1);
-                    if ($row.hasClass("jqgrow")) {
+                    if ($row.hasClass("jqgrow") || $row.hasClass("jqfoot")) {// $row.hasClass("jqfoot") means grouping summary row
                         rowid = $row.attr("id");
                         id = $.jgrid.stripPref(idPrefix, rowid);
-                        pos = iCol === undefined ? rows[i].cells.length : iCol + iOffset;
+                        pos = iCol + iOffset;
                         rawObject = {}; // TODO later
-                        if (p.datatype === "local" || p.datatype === "jsonstring") {
+                        if (p.datatype === "local" || p.datatype === "jsonstring" || p.treeGrid === true) {
                             rawObject = $self.jqGrid("getLocalRow", rowid);
-                            if (rawObject != null && columnData[id] !== undefined) {
+                            if (p.treeGrid === true || (p.loadonce === true && p.datatype === "local")) {
+                                // It's unclear how to detect initial datatype value "jsonstring" or datatype !== "local" with loadonce
+                                // probably it would be better to introduce datatypeOrg and use it additionally
+                                rawObject[locid] = id;
+                            }
+                            if (rawObject != null && columnData[id] !== undefined && !$row.hasClass("jqfoot")) {
                                 rawObject[cmNew.name] = columnData[id];
                             }
                         } else {
                             rawObject = $self.jqGrid("getRowData", rowid);
                         }
                         rdata = rawObject;
-                        formattedCellValue = this.formatter(rowid, columnData[id] === undefined ? "" : columnData[id], pos, rawObject, "add");
+                        formattedCellValue = $row.hasClass("jqfoot") ? "" :
+                                this.formatter(rowid, columnData[id] === undefined ? "" : columnData[id],
+                                    pos, rawObject, "add");
                         cellProp = this.formatCol(pos, i, formattedCellValue, rawObject, rowid, rdata);
 
                         $td = $('<td role="gridcell" aria-describedby="list_total" ' +
@@ -132,10 +164,7 @@
                         $td.attr("colspan", parseInt($td.attr("colspan"), 10) + 1);
                         continue;
                     }
-                    if ($row.hasClass("jqfoot")) { // grouping summary row
-                        continue;
-                    }
-                    if (iCol === undefined) {
+                    if (iCol === colModel.length - 1) {
                         $td.appendTo($row);
                     } else if (iCol + iOffset >= 1) {
                         $td.insertAfter(rows[i].cells[iCol + iOffset - 1]);
@@ -146,10 +175,18 @@
 
                 if ($ftableRows.length > 0) {
                     // append the column in the body
+                    pos = iCol + iOffset;
+                    rawObject = $self.jqGrid("footerData", "get", options.footerData, options.formatFooter);
+                    rawObject[cmNew.name] = options.footerData;
+                    formattedCellValue = options.formatFooter ?
+                            this.formatter("", options.footerData === undefined ? "" : options.footerData, pos, rawObject, "add") :
+                            options.footerData;
                     for (i = 0; i < $ftableRows.length; i++) {
-                        pos = iCol === undefined ? $ftableRows[i].cells.length : iCol + iOffset;
-                        $td = $("<td role='gridcell' " + this.formatCol(pos, 0, "", null, "", false) + ">&#160;</td>");
-                        if (iCol === undefined) {
+                        pos = iCol + iOffset;
+                        $td = $("<td role='gridcell' " + this.formatCol(pos, 0, "", null, "", false) + ">" +
+                            (formattedCellValue || "&#160;") +
+                            "</td>");
+                        if (iCol === colModel.length - 1) {
                             $td.appendTo($ftableRows[i]);
                         } else if (iCol + iOffset >= 1) {
                             $td.insertAfter($ftableRows[i].cells[iCol + iOffset - 1]);
@@ -159,13 +196,13 @@
                     }
                 }
 
-                if (adjustGridWidth !== false) {
+                if (options.adjustGridWidth !== false && p.frozenColumns !== true) {
                     $self.jqGrid("setGridWidth", p.width + $td.outerWidth(), false);
                     adjustGridWidth.call(this);
                 }
 
                 // destroy search form, edit form, view form, delete form if any exists (probably hidden)
-                $("#searchmodfbox_" + this.id + ",#editmod" + this.id + ",#viewmod" + this.id + ",#delmod" + this.id).remove();
+                $("#searchmodfbox_" + $.jgrid.jqID(p.id) + ",#editmod" + $.jgrid.jqID(p.id) + ",#viewmod" + $.jgrid.jqID(p.id) + ",#delmod" + $.jgrid.jqID(p.id)).remove();
 
                 $self.triggerHandler("jqGridAfterAddColumn", [options]);
             });
