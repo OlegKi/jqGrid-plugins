@@ -9,13 +9,14 @@
  */
 
 /*global jQuery */
-/*jslint plusplus: true, eqeq: true, todo: true, continue: true */
+/*jslint browser: true, plusplus: true, eqeq: true, todo: true, continue: true */
 (function ($) {
     "use strict";
     $.jgrid.extend({
         addColumn: function (options) {
             // currently supported options: cm (REQUIRED), insertWithColumnIndex, data, footerData, formatFooter, adjustGridWidth
-            var cmNew = options.cm, iCol = options.insertWithColumnIndex, columnData = options.data, colTemplate;
+            //                              autosearch, searchOnEnter
+            var cmNew = options.cm, iCol = options.insertWithColumnIndex, columnData = options.data, colTemplate, soptions;
             if (cmNew == null) {
                 return; // error, probably can be changed to throwing of an exception
             }
@@ -23,17 +24,17 @@
                     ($.jgrid.cmTemplate != null && typeof $.jgrid.cmTemplate[cmNew.template] === "object" ? $.jgrid.cmTemplate[cmNew.template] : {}) :
                     cmNew.template;
             return this.each(function () {
-                var $self = $(this), grid = this.grid, p = this.p, colModel = p.colModel, idPrefix = p.idPrefix, locid = "_id_",
-                    i, rows, $row, $th, $td, rowid, id, formattedCellValue, pos, rawObject, rdata, cellProp, thTemplate,
+                var $self = $(this), self = this, grid = this.grid, p = this.p, colModel = p.colModel, idPrefix = p.idPrefix, locid = "_id_",
+                    i, rows, $row, $th, $td, rowid, id, formattedCellValue, pos, rawObject, rdata, cellProp, thTemplate, searchElem, timeoutHnd,
                     $htable = p.direction === "ltr" ?
                             $(grid.hDiv).find(">.ui-jqgrid-hbox>table.ui-jqgrid-htable") :
                             $(grid.hDiv).find(">.ui-jqgrid-hbox-rtl>table.ui-jqgrid-htable"),
                     $ftableRows = p.direction === "ltr" ?
                             $(grid.sDiv).find(">.ui-jqgrid-hbox>table.ui-jqgrid-ftable tr.footrow") :
                             $(grid.sDiv).find(">.ui-jqgrid-hbox-rtl>table.ui-jqgrid-ftable tr.footrow"),
-                    $fhtable = p.direction === "ltr" ?
+                    /*$fhtable = p.direction === "ltr" ?
                             $(grid.fhDiv).find(">.ui-jqgrid-hbox>table.ui-jqgrid-htable") :
-                            $(grid.fhDiv).find(">.ui-jqgrid-hbox-rtl>table.ui-jqgrid-htable"),
+                            $(grid.fhDiv).find(">.ui-jqgrid-hbox-rtl>table.ui-jqgrid-htable"),*/
                     iOffset = (p.multiselect === true ? 1 : 0) + (p.subGrid === true ? 1 : 0) + (p.rownumbers === true ? 1 : 0),
                     adjustGridWidth = function () {
                         var $this = $(this),
@@ -61,11 +62,45 @@
                         $parent = $this.closest("div.ui-jqgrid");
                         $parent.find(">.ui-jqgrid-pager").width(w);
                         $parent.width($this.outerWidth(false));
+                    },
+                    changeSearch = function () {
+                        self.triggerToolbar();
+                        return false;
+                    },
+                    keypressSearch = function (e) {
+                        var key = e.charCode || e.keyCode || 0;
+                        if (key === 13) {
+                            self.triggerToolbar();
+                            return false;
+                        }
+                    },
+                    keydownSearch = function (e) {
+                        var key = e.which;
+                        switch (key) {
+                            case 13:
+                                return false;
+                            case 9:
+                            case 16:
+                            case 37:
+                            case 38:
+                            case 39:
+                            case 40:
+                            case 27:
+                                break;
+                            default:
+                                if (timeoutHnd) {
+                                    clearTimeout(timeoutHnd);
+                                }
+                                timeoutHnd = setTimeout(function (){
+                                    self.triggerToolbar();
+                                }, 500);
+                        }
                     };
 
                 $self.triggerHandler("jqGridBeforeAddColumn", [options]);
 
                 cmNew = $.extend(true, {}, p.cmTemplate, colTemplate || {}, cmNew);
+                soptions = $.extend({}, cmNew.searchoptions || {});
                 if (cmNew.index === undefined) {
                     cmNew.index = cmNew.name;
                 }
@@ -101,28 +136,70 @@
                 for (i = 0; i < rows.length; i++) {
                     // TODO: support of frozen columns
                     // TODO: support of grouping headers
-                    thTemplate = grid.headers[grid.headers.length - 1].el;
-                    $th = $(thTemplate).clone(true);
-                    $th.attr("id", p.id + "_" + cmNew.name);
-                    $th.css("display", cmNew.hidden === true ? "none" : "");
-                    $th.html('<span class="ui-jqgrid-resize ui-jqgrid-resize-' + p.direction +
-                        '" style="cursor: col-resize;">&nbsp;</span><div class="ui-th-div-ie ui-jqgrid-sortable" id="jqgh_' +
-                        p.id + "_" + cmNew.name + '">' +
-                        (cmNew.label || cmNew.name) +
-                        '<span class="s-ico" style="display: none;"><span class="ui-grid-ico-sort ui-icon-asc ui-state-disabled ui-icon ui-icon-triangle-1-n ui-sort-' +
-                        p.direction + '" sort="asc"></span><span class="ui-grid-ico-sort ui-icon-desc ui-state-disabled ui-icon ui-icon-triangle-1-s ui-sort-' +
-                        p.direction + '" sort="desc"></span></span></div>');
-                    $th.css("width", cmNew.width + "px");
+                    $row = $(rows[i]);
+                    if ($row.hasClass("ui-jqgrid-labels")) {
+                        thTemplate = grid.headers[grid.headers.length - 1].el;
+                        $th = $(thTemplate).clone(true);
+                        $th.attr("id", p.id + "_" + cmNew.name);
+                        $th.css("display", cmNew.hidden === true ? "none" : "");
+                        $th.html('<span class="ui-jqgrid-resize ui-jqgrid-resize-' + p.direction +
+                            '" style="cursor: col-resize;">&nbsp;</span><div class="ui-th-div-ie ui-jqgrid-sortable" id="jqgh_' +
+                            p.id + "_" + cmNew.name + '">' +
+                            (cmNew.label || cmNew.name) +
+                            '<span class="s-ico" style="display: none;"><span class="ui-grid-ico-sort ui-icon-asc ui-state-disabled ui-icon ui-icon-triangle-1-n ui-sort-' +
+                            p.direction + '" sort="asc"></span><span class="ui-grid-ico-sort ui-icon-desc ui-state-disabled ui-icon ui-icon-triangle-1-s ui-sort-' +
+                            p.direction + '" sort="desc"></span></span></div>');
+                        $th.css("width", cmNew.width + "px");
+                        if (iCol === colModel.length - 1) {
+                            grid.headers.push({ el: $th[0], width: cmNew.width, widthOrg: cmNew.width });
+                        } else {
+                            grid.headers.splice(iCol + iOffset, 0, { el: $th[0], width: cmNew.width, widthOrg: cmNew.width });
+                        }
+                    } else if ($row.hasClass("ui-search-toolbar")) {
+                        $th = $('<th class="ui-state-default ui-th-column ui-th-' + p.direction + '" role="columnheader"><div style="height: 100%; padding-right: 0.3em; padding-left: 0.3em; position: relative;"><table class="ui-search-table" cellspacing="0"><tbody><tr><td class="ui-search-oper" style="display: none;" colindex="' +
+                            iCol + '"></td>' +
+                            '<td class="ui-search-input">' +
+                            //'<input name="' + (cmNew.label || cmNew.name) + '" id="gs_' + cmNew.name + '" style="padding: 0px; width: 100%;" type="text" value="' +
+                            //(soptions.defaultValue !== undefined ? soptions.defaultValue : "") +
+                            //'">' +
+                            '</td>' +
+                            '<td class="ui-search-clear"' +
+                            (soptions.clearSearch === undefined || soptions.clearSearch ? "" : ' style="display:none;"') +
+                            '><a title="' + ($.jgrid.search.resetTitle || "Clear Search Value") +
+                            '" class="clearsearchclass" style="padding-right: 0.3em; padding-left: 0.3em;">' + ($.jgrid.search.resetIcon || "x") + '</a></td>' +
+                            '</tr></tbody></table></div></th>');
+                        searchElem = $.jgrid.createEl.call(this, cmNew.stype || "text", cmNew.searchoptions || {}, "", true, p.ajaxSelectOptions || {}, true);
+                        $(searchElem).attr("id", "gs_" + cmNew.name)
+                            .attr("name", cmNew.label || cmNew.name)
+                            .attr("value", soptions.defaultValue !== undefined ? soptions.defaultValue : "")
+                            .css({padding: 0, width: "100%"})
+                            .appendTo($th.find(".ui-search-input"));
+                        if (cmNew.hidden === true) {
+                            $th.css("display", "none");
+                        }
+
+                        if (options.autosearch !== false) {
+                            if (cmNew.stype === "select") {
+                                $(searchElem).change(changeSearch);
+                            } else if (cmNew.stype === "text" || cmNew.stype === undefined) {
+                                if (options.searchOnEnter || options.searchOnEnter === undefined) {
+                                    $(searchElem).keypress(keypressSearch);
+                                } else {
+                                    $(searchElem).keydown(keydownSearch);
+                                }
+                            }
+                        }
+                        // TODO: update colindex attribute of other elements: rows[i].cells[iCol + iOffset] and later
+                        // the current implementation don't support autosearch and searchOnEnter of filterToolbar
+                    }
                     if (iCol === colModel.length - 1) {
                         $th.appendTo(rows[i]);
-                        grid.headers.push({ el: $th[0], width: cmNew.width, widthOrg: cmNew.width });
                     } else {
                         if (iCol + iOffset >= 1) {
                             $th.insertAfter(rows[i].cells[iCol + iOffset - 1]);
                         } else {
                             $th.insertBefore(rows[i].cells[iCol + iOffset]);
                         }
-                        grid.headers.splice(iCol + iOffset, 0, { el: $th[0], width: cmNew.width, widthOrg: cmNew.width });
                     }
                 }
 
