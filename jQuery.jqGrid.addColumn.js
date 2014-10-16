@@ -16,6 +16,8 @@
         addColumn: function (options) {
             // currently supported options: cm (REQUIRED), insertWithColumnIndex, data, footerData, formatFooter, adjustGridWidth
             //                              autosearch, searchOnEnter
+            // The current code suppose that there are AT LEAST one (probebly hidden) column in the grid. If one use
+            // filter toolbar then the column should be searchable.
             var cmNew = options.cm, iCol = options.insertWithColumnIndex, columnData = options.data, colTemplate, soptions;
             if (cmNew == null) {
                 return; // error, probably can be changed to throwing of an exception
