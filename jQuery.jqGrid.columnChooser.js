@@ -56,7 +56,8 @@ $.jgrid.extend({
 			   */
 			dlog : "dialog",
 			dialog_opts : {
-				minWidth: 470
+				minWidth: 470,
+				dialogClass: "ui-jqdialog"
 			},
 			/* dlog_opts is either an option object to be passed 
 			   to "dlog", or (more likely) a function that creates
@@ -191,7 +192,7 @@ $.jgrid.extend({
 		$dialogContent.find(">div").css({ width: "100%", height: "100%", margin: "auto" });
 		$dialogContent.find(">div>.ui-multiselect").css({ width: "100%", height: "100%", margin: "auto" });
 
-		dividerLocation = opts.msel_opts.dividerLocation || $.ui.multiselect.defaults.dividerLocation;
+		dividerLocation = opts.msel_opts.dividerLocation || ($.ui.multiselect.defaults != null && $.ui.multiselect.defaults.dividerLocation || $.ui.multiselect.prototype != null && $.ui.multiselect.prototype.options.dividerLocation);
 		$dialogContent.find(">div>.ui-multiselect>.selected").css({ width: dividerLocation * 100 + "%", height: "100%", margin: "auto", boxSizing: "border-box" });
 		$dialogContent.find(">div>.ui-multiselect>.available").css({ width: (100 - dividerLocation * 100) + "%", height: "100%", margin: "auto", boxSizing: "border-box" });
 	}
