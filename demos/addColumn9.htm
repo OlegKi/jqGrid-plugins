@@ -9,6 +9,9 @@
     <link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/jqgrid/4.6.0/css/ui.jqgrid.css"/>
     <style type="text/css">
         html, body { font-size: 75%; }
+        .ui-search-menu.ui-menu .ui-menu-item { list-style-image: none; padding-right: 0; padding-left: 0; }
+        .ui-search-menu.ui-menu .ui-menu-item a { display: block; }
+        .ui-search-menu.ui-menu .ui-menu-item a.g-menu-item:hover { margin: -1px; font-weight: normal; }
     </style>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>
@@ -100,7 +103,7 @@
                 idPrefix: "a",
                 //direction: "rtl",
                 rowList: [5, 10, 20],
-                pager: "#pager",
+                //pager: "#pager",
                 toppager: true,
                 gridview: true,
                 autoencode: true,
@@ -124,9 +127,10 @@
                 showQuery: true,
                 overlay: 0,
                 stringResult: true,
-                defaultSearch: 'cn'
+                searchOperators: true,
+                defaultSearch: "cn"
             });
-            $grid.jqGrid("filterToolbar", {defaultSearch: "cn"});
+            $grid.jqGrid("filterToolbar", {searchOperators: true});
             $grid.triggerHandler("jqGridAfterGridComplete"); // to fix setFrozenColumns with local data
             $grid.jqGrid("navGrid", "#pager", {add: false, edit: true, del: false, search: false, refresh: false, view: true, cloneToTop: true});
             $grid.jqGrid("addColumn", {

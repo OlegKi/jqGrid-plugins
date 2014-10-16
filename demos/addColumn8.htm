@@ -98,7 +98,7 @@
                 ],
                 rowNum: 10,
                 idPrefix: "a",
-                direction: "rtl",
+                //direction: "rtl",
                 rowList: [5, 10, 20],
                 pager: "#pager",
                 toppager: true,
@@ -127,6 +127,7 @@
                 stringResult: true,
                 defaultSearch: 'cn'
             });
+            $grid.jqGrid("filterToolbar", {defaultSearch: "cn"});
             $grid.jqGrid("setFrozenColumns");
             $grid.triggerHandler("jqGridAfterGridComplete"); // to fix setFrozenColumns with local data
             $grid.jqGrid("navGrid", "#pager", {add: false, edit: true, del: false, search: false, refresh: false, view: true, cloneToTop: true});
