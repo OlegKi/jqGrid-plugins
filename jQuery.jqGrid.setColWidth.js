@@ -1,9 +1,9 @@
 /**
- * Copyright (c) 2013, Dr. Oleg Kiriljuk, oleg.kiriljuk@ok-soft-gmbh.com
+ * Copyright (c) 2013-2014, Dr. Oleg Kiriljuk, oleg.kiriljuk@ok-soft-gmbh.com
  * Dual licensed under the MIT and GPL licenses
  * http://www.opensource.org/licenses/mit-license.php
  * http://www.gnu.org/licenses/gpl-2.0.html
- * Date: 2013-11-17
+ * Date: 2013-11-17, 2014-10-18
  * see the answers http://stackoverflow.com/a/20030652/315935
  *             and http://stackoverflow.com/a/14265456/315935
  */
@@ -35,7 +35,9 @@
                 }
                 grid.resizing = { idx: iCol };
                 grid.headers[iCol].newWidth = newWidth;
-                grid.newWidth = grid.width + newWidth - grid.headers[iCol].width;
+                if (adjustGridWidth !== false) {
+                    grid.newWidth = grid.width + newWidth - grid.headers[iCol].width;
+                }
                 grid.dragEnd();   // adjust column width
                 if (adjustGridWidth !== false) {
                     $self.jqGrid("setGridWidth", grid.newWidth, false); // adjust grid width too
