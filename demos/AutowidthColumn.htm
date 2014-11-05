@@ -1,0 +1,191 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>http://stackoverflow.com/q/26751123/315935</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="author" content="Oleg Kiriljuk"/>
+    <link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/redmond/jquery-ui.css"/>
+    <link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/jqgrid/4.6.0/css/ui.jqgrid.css"/>
+    <link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/jqgrid/4.6.0/plugins/ui.multiselect.css"/>
+    <style type="text/css">
+        html, body { font-size: 75%; }
+        .ui-jqgrid-hdiv { overflow-y: hidden; }
+    </style>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
+    <!--<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jqgrid/4.6.0/plugins/ui.multiselect.js"></script>-->
+    <script type="text/javascript" src="http://www.ok-soft-gmbh.com/jqGrid/jquery.jqGrid-4.6.0/plugins/ui.multiselect-fixed.js"></script>
+    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jqgrid/4.6.0/js/i18n/grid.locale-en.js"></script>
+    <script type="text/javascript">
+        $.jgrid.no_legacy_api = true;
+        $.jgrid.useJSON = true;
+    </script>
+    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jqgrid/4.6.0/js/jquery.jqGrid.src.js"></script>
+    <!--<script type="text/javascript" src="http://www.ok-soft-gmbh.com/jqGrid/jquery.jqGrid-4.6.0/js/jquery.jqGrid.src-columnChooser.js"></script>-->
+    <script type="text/javascript" src="http://www.ok-soft-gmbh.com/jqGrid/jquery.jqGrid-4.6.0/plugins/jQuery.jqGrid.columnChooser.js"></script>
+    <script type="text/javascript" src="http://www.ok-soft-gmbh.com/jqGrid/jquery.jqGrid-4.6.0/plugins/jQuery.jqGrid.setColWidth.js"></script>
+    <script type="text/javascript" src="http://www.ok-soft-gmbh.com/jqGrid/jquery.jqGrid-4.6.0/plugins/jQuery.jqGrid.autoWidthColumns.js"></script>
+    <script type="text/javascript">
+    //<![CDATA[
+        /*global $ */
+        /*jslint devel: true, browser: true, plusplus: true, nomen: true, unparam: true, continue: true */
+        $(function () {
+            "use strict";
+            var mydata = [
+                    { id: "10",  invdate: "2007-10-01", name: "test1", note: "note1",  amount: "200.00", tax: "10.00", closed: true,  ship_via: "TN", total: "210.00" },
+                    { id: "20",  invdate: "2007-10-02", name: "test1", note: "note2 very long text very long text very long text very long text very long text very long text",  amount: "300.00", tax: "20.00", closed: false, ship_via: "FE", total: "320.00" },
+                    { id: "30",  invdate: "2007-09-01", name: "test3", note: "note3",  amount: "400.00", tax: "30.00", closed: false, ship_via: "FE", total: "430.00" },
+                    { id: "40",  invdate: "2007-10-04", name: "test2", note: "note4",  amount: "200.00", tax: "10.00", closed: true,  ship_via: "TN", total: "210.00" },
+                    { id: "50",  invdate: "2007-10-31", name: "test2", note: "note5",  amount: "300.00", tax: "20.00", closed: false, ship_via: "FE", total: "320.00" },
+                    { id: "60",  invdate: "2007-09-06", name: "test3", note: "note6",  amount: "400.00", tax: "30.00", closed: false, ship_via: "FE", total: "430.00" },
+                    { id: "70",  invdate: "2007-10-04", name: "test3", note: "note7",  amount: "200.00", tax: "10.00", closed: true,  ship_via: "TN", total: "210.00" },
+                    { id: "80",  invdate: "2007-10-03", name: "test1", note: "note8 long text long text",  amount: "300.00", tax: "20.00", closed: false, ship_via: "FE", total: "320.00" },
+                    { id: "90",  invdate: "2007-09-01", name: "test3", note: "note9",  amount: "400.00", tax: "30.00", closed: false, ship_via: "TN", total: "430.00" },
+                    { id: "100", invdate: "2007-09-08", name: "test2", note: "note10", amount: "500.00", tax: "30.00", closed: true,  ship_via: "TN", total: "530.00" },
+                    { id: "110", invdate: "2007-09-08", name: "test2", note: "note11", amount: "500.00", tax: "30.00", closed: false, ship_via: "FE", total: "530.00" },
+                    { id: "120", invdate: "2007-09-10", name: "test3", note: "note12", amount: "500.00", tax: "30.00", closed: false, ship_via: "FE", total: "530.00" }
+                ],
+                $grid = $("#list"),
+                initDateEdit = function (elem) {
+                    $(elem).datepicker({
+                        dateFormat: "dd-M-yy",
+                        autoSize: true,
+                        changeYear: true,
+                        changeMonth: true,
+                        showButtonPanel: true,
+                        showWeek: true
+                    });
+                },
+                initDateSearch = function (elem) {
+                    var $self = $(this);
+                    setTimeout(function () {
+                        $(elem).datepicker({
+                            dateFormat: "dd-M-yy",
+                            autoSize: true,
+                            changeYear: true,
+                            changeMonth: true,
+                            showWeek: true,
+                            showButtonPanel: true,
+                            onSelect: function () {
+                                if (this.id.substr(0, 3) === "gs_") {
+                                    // call triggerToolbar only in case of searching toolbar
+                                    setTimeout(function () {
+                                        $self[0].triggerToolbar();
+                                    }, 100);
+                                }
+                            }
+                        });
+                    }, 100);
+                },
+                numberTemplate = {formatter: "number", align: "right", sorttype: "number",
+                    editrules: {number: true, required: true},
+                    searchoptions: { sopt: ["eq", "ne", "lt", "le", "gt", "ge", "nu", "nn", "in", "ni"] }};
+        
+            $.extend(true, $.ui.multiselect, {
+                locale: {
+                    addAll: 'Make all visible',
+                    removeAll: 'Hidde All',
+                    itemsCount: 'Avlialble Columns'
+                }
+            });
+
+            // to have no conflicts with usage of jQuery UI Multiselect Widget
+            // ui.multiselect.js (ui.multiselect-fixed.js) from http://www.quasipartikel.at/multiselect/
+            // and jQuery UI MultiSelect Widget (http://www.erichynds.com/blog/jquery-ui-multiselect-widget)
+            // I prefer to bridge the jQuery UI Multiselect Widget ui.multiselect.js (ui.multiselect-fixed.js)
+            // with the following row below
+            $.widget.bridge("quasipartikel_at_multiselect", $.ui.multiselect);
+        
+            $.extend(true, $.jgrid.col, {
+                width: 450,
+                modal: true,
+                msel_opts: { dividerLocation: 0.5 },
+                msel: "quasipartikel_at_multiselect", // briged name
+                dialog_opts: {
+                    minWidth: 450,
+                    show: "blind",
+                    hide: "explode"
+                }
+            });
+
+            // if one uses shrinkToFit: false option and one want to have grid without
+            // horizontal scroll bar after show previously hidden column then one
+            // should to add the below fix of grid width
+            $grid.bind("jqGridShowHideCol", function () {
+                $(this).jqGrid("setGridWidth", this.p.tblwidth);
+            });
+        
+            $grid.jqGrid("autoWidthColumns").jqGrid({
+                datatype: "local",
+                data: mydata,
+                colNames: ["Client", "Date", "Closed", "Shipped via", "Notes", "Tax", "Amount", "Total"],
+                colModel: [
+                    { name: "name", align: "center", editable: true, width: 65, editrules: {required: true} },
+                    { name: "invdate", width: 80, align: "center", sorttype: "date",
+                        formatter: "date", formatoptions: { newformat: "d-M-Y" }, editable: true, datefmt: "d-M-Y",
+                        editoptions: { dataInit: initDateEdit },
+                        searchoptions: { sopt: ["eq", "ne", "lt", "le", "gt", "ge"], dataInit: initDateSearch } },
+                    { name: "closed", width: 70, align: "center", editable: true, formatter: "checkbox",
+                        edittype: "checkbox", editoptions: {value: "Yes:No", defaultValue: "Yes"},
+                        stype: "select", searchoptions: { sopt: ["eq", "ne"], value: ":Any;true:Yes;false:No" } },
+                    { name: "ship_via", width: 105, align: "center", editable: true, formatter: "select",
+                        edittype: "select", editoptions: { value: "FE:FedEx;TN:TNT;IN:Intim", defaultValue: "IN" },
+                        stype: "select", searchoptions: { sopt: ["eq", "ne"], value: ":Any;FE:FedEx;TN:TNT;IN:IN" } },
+                    { name: "note", width: 60, sortable: false, editable: true, edittype: "textarea" },
+                    { name: "tax", width: 52, editable: true, template: numberTemplate, hidden: true  },
+                    { name: "amount", width: 75, editable: true, template: numberTemplate },
+                    { name: "total", width: 60, template: numberTemplate }
+                ],
+                rowNum: 10,
+                rowList: [5, 10, 20],
+                pager: "#pager",
+                gridview: true,
+                autoencode: true,
+                ignoreCase: true,
+                sortname: "name",
+                viewrecords: true,
+                sortorder: "desc",
+                rownumbers: true,
+                height: "auto",
+                shrinkToFit: false,
+                editurl: "clientArray",
+                onSelectRow: function (rowid) {
+                    var $self = $(this),
+                        // savedRows array is not empty if some row is in inline editing mode
+                        savedRows = $self.jqGrid("getGridParam", "savedRow");
+
+                    if (savedRows.length > 0 && savedRows[0].id !== rowid) {
+                        // one can replace restoreRow to saveRow if one need another behavior
+                        $self.jqGrid("restoreRow", savedRows[0].id);
+                    }
+                    $self.jqGrid("editRow", rowid, { keys: true });
+                }
+            });
+            $grid.jqGrid("navGrid", "#pager", {add: false, edit: false, del: false});
+            $grid.jqGrid("navButtonAdd", "#pager", {
+                caption: "",
+                buttonicon: "ui-icon-calculator",
+                title: "Choose Columns",
+                onClickButton: function () {
+                    var $self = $(this),
+                        // savedRows array is not empty if some row is in inline editing mode
+                        savedRows = $self.jqGrid("getGridParam", "savedRow");
+
+                    if (savedRows.length > 0) {
+                        // one can replace restoreRow to saveRow if one need another behavior
+                        $self.jqGrid("restoreRow", savedRows[0].id);
+                    }
+
+                    $self.jqGrid("columnChooser");
+                }
+            });
+        });
+    //]]>
+    </script>
+</head>
+<body>
+    <table id="list"><tr><td></td></tr></table>
+    <div id="pager"></div>
+</body>
+</html>
