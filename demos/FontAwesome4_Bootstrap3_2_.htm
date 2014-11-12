@@ -36,66 +36,9 @@
     <script type="text/javascript" src="http://www.ok-soft-gmbh.com/jqGrid/jquery.jqGrid-4.6.0/plugins/jQuery.jqGrid.checkboxFontAwesome4.js"></script>
     <!--<script type="text/javascript" src="http://www.ok-soft-gmbh.com/jqGrid/jquery.jqGrid-4.6.0/plugins/jQuery.jqGrid.columnChooser.js"></script>-->
     <script type="text/javascript" src="http://www.ok-soft-gmbh.com/jqGrid/jquery.jqGrid-4.6.0/plugins/jQuery.jqGrid.setColWidth.js"></script>
-    <!--<script type="text/javascript" src="http://www.ok-soft-gmbh.com/jqGrid/jquery.jqGrid-4.6.0/plugins/jQuery.jqGrid.autoWidthColumns.js"></script>-->
+    <script type="text/javascript" src="http://www.ok-soft-gmbh.com/jqGrid/jquery.jqGrid-4.6.0/plugins/jQuery.jqGrid.autoWidthColumns.js"></script>
     <script type="text/javascript">
     //<![CDATA[
-/*global jQuery */
-(function ($) {
-	"use strict";
-	/*jslint continue: true, plusplus: true */
-	$.jgrid.extend({
-		autoWidthColumns: function () {
-			return this.each(function () {
-				var recalculateColumnWidth = function (iCol, adjustGridWidth) {
-						// TODO: include support of more sophisticated grid features like fixed columns, grouping and so on.
-						var $self = $(this), p = $self.jqGrid("getGridParam"), cm = p.colModel[iCol], cellLayout = p.cellLayout,
-							iRow,
-							rows,
-							row,
-							colWidth,
-							idColHeadPrexif = "jqgh_" + this.id + "_";
-
-						if (cm.hidden) {
-							return;
-						}
-						colWidth = $("#" + idColHeadPrexif + $.jgrid.jqID(cm.name) + ">.mywrapping").outerWidth(true) + 25; // 25px for sorting icons
-						for (iRow = 0, rows = this.rows; iRow < rows.length; iRow++) {
-							row = rows[iRow];
-							if ($(row).hasClass("jqgrow")) {
-								colWidth = Math.max(colWidth, $(row.cells[iCol]).find(".mywrapping").outerWidth(true));
-							}
-						}
-						$self.jqGrid("setColWidth", iCol, colWidth + ($.jgrid.cell_width ? cellLayout : 0), adjustGridWidth);
-
-					};
-				// TODO separate jqGridShowHideCol and jqGridAfterLoadComplete.
-				// don't do wrapping in jqGridShowHideCol
-				// in jqGridShowHideCol add false at parameter of setColWidth
-				$(this).bind("jqGridAfterLoadComplete", function () {
-					var $this = $(this),
-						$cells = $this.find(">tbody>tr.jqgrow>td"),
-						$colHeaders = $($.map(this.grid.headers, function (item) { return item.el; })).find(">div"),
-						colModel = $this.jqGrid("getGridParam", "colModel"),
-						n = $.isArray(colModel) ? colModel.length : 0,
-						iCol;
-
-					$cells.wrapInner("<span class='mywrapping'></span>");
-					$colHeaders.wrapInner("<span class='mywrapping'></span>");
-
-					for (iCol = 0; iCol < n; iCol++) {
-						recalculateColumnWidth.call(this, iCol, true);
-					}
-				});
-				$(this).bind("jqGridShowHideCol", function (e, isShow, columnName, iCol) {
-					if (isShow) {
-						recalculateColumnWidth.call(this, iCol, true);
-					}
-				});
-			});
-		}
-	});
-}(jQuery));
-
         $(function () {
             "use strict";
             var mydata = [

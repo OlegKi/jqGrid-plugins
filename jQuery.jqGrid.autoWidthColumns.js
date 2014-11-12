@@ -13,7 +13,8 @@
 	"use strict";
 	/*jslint eqeq: true, unparam: true, todo: true, plusplus: true */
 	$.jgrid.extend({
-		autoWidthColumns: function () {
+		autoWidthColumns: function (options) {
+			var compact = options != null && typeof options.compact === "boolean" ? options.compact : false;
 			return this.each(function () {
 				var recalculateColumnWidth = function (iCol, adjustGridWidth) {
 						// TODO: include support of more sophisticated grid features like frozen columns, grouping and so on.
@@ -31,12 +32,12 @@
 								return width;
 							};
 
-						if (cm == null || cm.hidden) {
+						if (cm == null || cm.hidden || cm.fixed) {
 							return; // don't change the width of hidden columns
 						}
 						colWidth = getOuterWidth($(this.grid.headers[iCol].el).find(">div")) +
-							(cm.name === p.sortname || p.viewsortcols[0] ? 20 : 0) +
-							(!$.jgrid.cell_width ? p.cellLayout : 0); // 25px for sorting icons
+							(cm.name === p.sortname || p.viewsortcols[0] || !compact ? 20 : 0) +
+							($.jgrid.cell_width ? p.cellLayout : 0); // 25px for sorting icons
 						for (iRow = 0, rows = this.rows; iRow < rows.length; iRow++) {
 							row = rows[iRow];
 							if ($(row).hasClass("jqgrow")) {
@@ -58,9 +59,26 @@
 						}
 					};
 
-				$(this).bind("jqGridAfterLoadComplete jqGridInlineAfterSaveRow", autosizeAllColumns);
+				$(this).bind("jqGridAfterLoadComplete jqGridInlineAfterSaveRow jqGridForceAutosizeAll", autosizeAllColumns);
 				$(this).bind("jqGridShowHideCol", function (e, isShow, columnName, iCol) {
 					if (isShow) {
+						recalculateColumnWidth.call(this, iCol, true);
+					}
+				});
+				$(this).bind("jqGridForceAutosize", function (e, iCol) {
+					var colModel, n, i;
+					if (typeof iCol === "string") {
+						colModel = $(this).jqGrid("getGridParam", "colModel");
+						if (colModel == null) {
+							return; // wrong input data
+						}
+						for (i = 0, n = colModel.length; i < n; i++) {
+							if (colModel[i].name === iCol) {
+								recalculateColumnWidth.call(this, i, true);
+								return;
+							}
+						}
+					} else {
 						recalculateColumnWidth.call(this, iCol, true);
 					}
 				});
