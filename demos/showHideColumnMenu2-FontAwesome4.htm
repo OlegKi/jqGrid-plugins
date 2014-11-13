@@ -24,6 +24,7 @@
     </script>
     <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jqgrid/4.6.0/js/jquery.jqGrid.src.js"></script>
     <script type="text/javascript" src="http://www.ok-soft-gmbh.com/jqGrid/jquery.jqGrid-4.6.0/plugins/jQuery.jqGrid.columnChooser.js"></script>
+    <script type="text/javascript" src="http://www.ok-soft-gmbh.com/jqGrid/jquery.jqGrid-4.6.0/plugins/jQuery.jqGrid.checkboxFontAwesome4.js"></script>
     <script type="text/javascript" src="http://www.ok-soft-gmbh.com/jqGrid/jquery.jqGrid-4.6.0/plugins/jQuery.jqGrid.showHideColumnMenu.js"></script>
     <script type="text/javascript">
     //<![CDATA[
@@ -91,7 +92,7 @@
                         formatter: "date", formatoptions: { newformat: "d-M-Y" }, editable: true, datefmt: "d-M-Y",
                         editoptions: { dataInit: initDateEdit },
                         searchoptions: { sopt: ["eq", "ne", "lt", "le", "gt", "ge"], dataInit: initDateSearch } },
-                    { name: "closed", width: 70, align: "center", editable: true, formatter: "checkbox",
+                    { name: "closed", width: 70, align: "center", editable: true, formatter: "checkboxFontAwesome4",
                         edittype: "checkbox", editoptions: {value: "Yes:No", defaultValue: "Yes"},
                         stype: "select", searchoptions: { sopt: ["eq", "ne"], value: ":Any;true:Yes;false:No" } },
                     { name: "ship_via", width: 105, align: "center", editable: true, formatter: "select",
