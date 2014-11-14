@@ -46,7 +46,7 @@
 				var $self = $(this);
 				$(this.grid.hDiv).find(".ui-jqgrid-labels").contextmenu(function (e) {
 					var p = $self.jqGrid("getGridParam"), colModel = p.colModel, colNames = p.colNames, iCol, nCol = colModel.length, cm, $li,
-						$menu = $("<ul></ul>");
+						$menu = $("<ul class=\"ui-jqgrid-showHideColumnMenu\"></ul>");
 					for (iCol = 0; iCol < nCol; iCol++) {
 						cm = colModel[iCol];
 						$li = $("<li></li>")
@@ -57,6 +57,7 @@
 						$li.appendTo($menu);
 					}
 					$menu.css(options.menuStyle);
+					$("ul.ui-jqgrid-showHideColumnMenu").menu("destroy").remove(); // remove menu if any exist
 					$menu.appendTo("body")
 						.menu({
 							select: function (event, ui) {
