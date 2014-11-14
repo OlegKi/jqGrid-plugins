@@ -1,0 +1,96 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="author" content="Oleg Kiriljuk"/>
+    <link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/themes/redmond/jquery-ui.css"/>
+    <link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/jqgrid/4.6.0/css/ui.jqgrid.css"/>
+    <style type="text/css">
+        html, body { font-size: 75%; }
+        .disableTextSelection {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none; /* Webkit */
+            -moz-user-select: none;    /* Firefox */ /* -moz-none */
+            -ms-user-select: none;     /* IE 10  */
+            user-select: none;
+        }
+    </style>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jqgrid/4.6.0/js/i18n/grid.locale-en.js"></script>
+    <script type="text/javascript">
+        $.jgrid.no_legacy_api = true;
+        $.jgrid.useJSON = true;
+    </script>
+    <!--<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jqgrid/4.6.0/js/jquery.jqGrid.src.js"></script>-->
+    <script type="text/javascript" src="http://www.ok-soft-gmbh.com/jqGrid/jquery.jqGrid-4.6.0/js/jquery.jqGrid.src-beforeSelectRow.js"></script>
+    <script type="text/javascript" src="http://www.ok-soft-gmbh.com/jqGrid/jquery.jqGrid-4.6.0/plugins/jQuery.jqGrid.winMultiSelect.js"></script>
+    <script type="text/javascript">
+    //<![CDATA[
+        /*global $ */
+        /*jslint browser: true */
+        $(function () {
+            "use strict";
+            var mydata = [
+                    {id: "1", name: "Cash",        num: "100", debit: "400.00",  credit: "250.00",  balance: "150.00",   enbl: "1", level: "0", parent: "null", isLeaf: false, expanded: true,  loaded: true},
+                    {id: "2", name: "Cash 1",      num: "1",   debit: "300.00",  credit: "200.00",  balance: "100.00",   enbl: "0", level: "1", parent: "1",    isLeaf: false, expanded: true,  loaded: true},
+                    {id: "3", name: "Sub Cash 1",  num: "1",   debit: "300.00",  credit: "200.00",  balance: "100.00",   enbl: "1", level: "2", parent: "2",    isLeaf: true,  expanded: false, loaded: true, icon: "ui-icon-star"},
+                    {id: "4", name: "Cash 2",      num: "2",   debit: "100.00",  credit: "50.00",   balance: "50.00",    enbl: "0", level: "1", parent: "1",    isLeaf: true,  expanded: false, loaded: true, icon: "ui-icon-flag"},
+                    {id: "5", name: "Bank\'s",     num: "200", debit: "1500.00", credit: "1000.00", balance: "500.00",   enbl: "1", level: "0", parent: "null", isLeaf: false, expanded: false, loaded: true},
+                    {id: "6", name: "Bank 1",      num: "1",   debit: "500.00",  credit: "0.00",    balance: "500.00",   enbl: "0", level: "1", parent: "5",    isLeaf: true,  expanded: false, loaded: true, icon: "ui-icon-home"},
+                    {id: "7", name: "Bank 2",      num: "2",   debit: "1000.00", credit: "1000.00", balance: "0.00",     enbl: "1", level: "1", parent: "5",    isLeaf: true,  expanded: false, loaded: true, icon: "ui-icon-suitcase"},
+                    {id: "8", name: "Fixed asset", num: "300", debit: "0.00",    credit: "1000.00", balance: "-1000.00", enbl: "0", level: "0", parent: "null", isLeaf: true,  expanded: false, loaded: true, icon: "ui-icon-lightbulb"}
+                ],
+                $grid = $("#treegrid"),
+                intTemplate = { width: 80, formatter: "integer", sorttype: "int", align: "center" },
+                numberTemplete = { width: 80, formatter: "number", sorttype: "number", align: "right" } ;
+
+            $grid.jqGrid("winMultiSelect").jqGrid({
+                datatype: "jsonstring",
+                datastr: mydata,
+                colNames: ["Account", "Acc Num", "Debit", "Credit", "Balance", "Enabled"],
+                colModel: [
+                    {name: "name", width: 180},
+                    {name: "num", template: intTemplate},
+                    {name: "debit", template: numberTemplete},
+                    {name: "credit", template: numberTemplete},
+                    {name: "balance", template: numberTemplete},
+                    {name: "enbl", width: 60, align: "center",
+                        formatter: "checkbox", editoptions: {value: "1:0"}}
+                ],
+                height: "auto",
+                gridview: true,
+                rowNum: 10000,
+                //multiselect: true,
+                treeGrid: true,
+                treeGridModel: "adjacency",
+                treedatatype: "local",
+                ExpandColumn: "name",
+                caption: "Demonstrate how to implement multiselect in TreeGrid like in Windows",
+                beforeSelectRow: function () {
+                    alert("In beforeSelectRow");
+                    return true;
+                }
+            });
+
+            $grid.bind("jqGridBeforeSelectRow", function (ev, rowid, e) {
+                alert("in second jqGridBeforeSelectRow");
+                return ev.result === undefined ? true : ev.result;
+            });
+
+            // disable text selection
+            $grid.closest(".ui-jqgrid-view").addClass("disableTextSelection").mousedown(function(e) {
+                document.onselectstart=function(){return false;};
+            }).mouseup(function(e) {
+                document.onselectstart=function(){return true;};
+            });
+        });
+    //]]>
+    </script>
+</head>
+<body>
+    <table id="treegrid"><tr><td></td></tr></table>
+</body>
+</html>
