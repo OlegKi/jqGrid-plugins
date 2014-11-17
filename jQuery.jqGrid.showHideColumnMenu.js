@@ -15,7 +15,7 @@
 			adjustGridWidth: true,
 			viewHideDlgColumnsAsDisabled: false,
 			shrink: false,
-			menuStyle: {float: "left"},
+			menuStyle: {"float": "left"},
 			checkboxChecked: "<input disabled=\"disabled\" checked=\"checked\" type=\"checkbox\"/>",
 			checkboxUnChecked: "<input disabled=\"disabled\" type=\"checkbox\"/>",
 			checkboxSelector: "input[type=checkbox]",
@@ -41,7 +41,9 @@
 	/*jslint continue: true, eqeq: true, unparam: true, plusplus: true */
 	$.jgrid.extend({
 		showHideColumnMenu: function (opt) {
-			var options = $.extend(true, {}, $.jgrid.showHideColumnMenu, opt);
+			var options = $.extend(true, {}, $.jgrid.showHideColumnMenu, opt),
+				versionParts = $.ui != null && typeof $.ui.version === "string" ? /^([0-9]+).([0-9]+).([0-9]+)$/.exec($.ui.version) : [],
+				isAncorRequired = versionParts != null && versionParts.length === 4 && versionParts[1] === "1" && versionParts[2] < 11;
 			return this.each(function () {
 				var $self = $(this);
 				$(this.grid.hDiv).find(".ui-jqgrid-labels").contextmenu(function (e) {
@@ -54,6 +56,9 @@
 								.text(colNames[iCol] === "" ? cm.name : colNames[iCol]);
 						options.modifyMenuItem.call($self[0], $li, cm, options);
 						$li.prepend(cm.hidden ? options.checkboxUnChecked : options.checkboxChecked);
+						if (isAncorRequired) {
+							$li.wrapInner("<a></a>");
+						}
 						$li.appendTo($menu);
 					}
 					$menu.css(options.menuStyle);
@@ -62,10 +67,10 @@
 						.menu({
 							select: function (event, ui) {
 								var i = parseInt(ui.item.data("iCol"), 10), $cb = ui.item.find(options.checkboxSelector),
-									colWidth = $self[0].grid.headers[i].width + (!$.jgrid.cell_width ? p.cellLayout : 0),
+									colWidth,
 									cmi = colModel[i],
 									toHide = options.isChecked.call($self[0], $cb, event, cmi);
-								if (!isNaN(i) && i >= 0 && cmi !== undefined && $cb.length > 0) {
+								if (!isNaN(i) && i >= 0 && cmi != null && $cb.length > 0) {
 									if (toHide) {
 										options.toUnCheck.call($self[0], $cb, event, cmi);
 										colWidth = $($self[0].grid.headers[i].el).outerWidth();
@@ -74,6 +79,9 @@
 										options.toCheck.call($self[0], $cb, event, cmi);
 										$self.jqGrid("showCol", cmi.name);
 										colWidth = $($self[0].grid.headers[i].el).outerWidth();
+									}
+									if (colWidth === 0) {
+										colWidth = $self[0].grid.headers[i].width + (!$.jgrid.cell_width ? p.cellLayout : 0);
 									}
 									$(this).parent().css("zoom", 1); // fix visibility in IE
 									if (options.adjustGridWidth) {
@@ -84,7 +92,7 @@
 								}
 							}
 						})
-						.mouseleave(function (e) {
+						.mouseleave(function () {
 							$(this).menu("destroy").remove();
 						})
 						.position({
