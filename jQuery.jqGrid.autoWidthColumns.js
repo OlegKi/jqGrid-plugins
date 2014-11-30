@@ -36,7 +36,7 @@
 							return; // don't change the width of hidden columns
 						}
 						colWidth = getOuterWidth($(this.grid.headers[iCol].el).find(">div")) +
-							(cm.name === p.sortname || p.viewsortcols[0] || !compact ? 20 : 0) +
+							(cm.name === p.sortname || p.viewsortcols[0] || !compact ? 24 : 0) +
 							($.jgrid.cell_width ? p.cellLayout : 0); // 25px for sorting icons
 						for (iRow = 0, rows = this.rows; iRow < rows.length; iRow++) {
 							row = rows[iRow];
