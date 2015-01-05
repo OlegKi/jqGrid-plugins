@@ -82,3 +82,4 @@
 }
 .ui-jqgrid .ui-jqdialog .fm-button>span { margin-left: 0.5em; margin-right: 0; }
 .ui-jqdialog>.ui-resizable-se { bottom: -3px; right: -3px}
+.jqgrow .ui-pg-div>span.fa { background: none; border: 0 none; }

@@ -10,7 +10,7 @@
 (function ($) {
     "use strict";
     /*jslint unparam: true */
-    $.extend($.jgrid, {
+    $.extend(true, $.jgrid, {
         icons: {
             common: "fa", // "fa fa-lg"
             titleVisibleGrid: "fa-chevron-circle-up",
@@ -25,6 +25,10 @@
             navSearch: "fa-search fa-fw",
             navRefresh: "fa-refresh fa-fw",
             navView: "fa-file-o fa-fw",
+			actionEdit: "fa-fw ui-state-default fa-pencil",
+			actionDel: "fa-fw ui-state-default fa-trash-o",
+			actionSave: "fa-fw ui-state-default fa-floppy-o",
+			actionCancel: "fa-fw ui-state-default fa-ban",
             pagerFirst: "fa-step-backward fa-fw",
             pagerPrev: "fa-backward fa-fw",
             pagerNext: "fa-forward fa-fw",
@@ -37,13 +41,15 @@
             searchReset: "fa-undo",
             searchQuery: "fa-comments-o",
             searchSearch: "fa-search",
+            subgridPlus: "fa-plus fa-fw",
+            subgridMinus: "fa-minus fa-fw",
             getClass: function (prop) {
                 return this.common !== "" ? this.common + " " + this[prop] : this[prop];
             }
         }
     });
 
-    $.extend($.jgrid.nav, {
+    $.extend(true, $.jgrid.nav, {
         editicon: $.jgrid.icons.getClass("navEdit"),
         addicon: $.jgrid.icons.getClass("navAdd"),
         delicon: $.jgrid.icons.getClass("navDel"),
@@ -52,11 +58,11 @@
         viewicon: $.jgrid.icons.getClass("navView")
     });
 
-    $.extend($.jgrid.defaults, {
+    $.extend(true, $.jgrid.defaults, {
         fontAwesomeIcons: true // the new option will be used in callbacks
     });
 
-    $.extend($.jgrid, {
+    $.extend(true, $.jgrid, {
         originalCreateModal: $.jgrid.originalCreateModal || $.jgrid.createModal,
         createModal: function (aIDs, content, p, insertSelector, posSelector, appendsel, css) {
             $.jgrid.originalCreateModal.call(this, aIDs, content, p, insertSelector, posSelector, appendsel, css);
@@ -69,7 +75,7 @@
         }
     });
 
-    $.extend($.jgrid.view, {
+    $.extend(true, $.jgrid.view, {
         beforeShowForm: function ($form) {
             var $dialog = $form.closest(".ui-jqdialog"),
                 $iconSpans = $dialog.find("a.fm-button>span.ui-icon");
@@ -88,7 +94,7 @@
         }
     });
 
-    $.extend($.jgrid.del, {
+    $.extend(true, $.jgrid.del, {
         afterShowForm: function ($form) {
             var $dialog = $form.closest(".ui-jqdialog"),
                 $tdButtons = $dialog.find(".EditTable .DelButton"),
@@ -112,7 +118,32 @@
             }
         }
     });
-
+/*
+	$.jgrid.extend({
+		addSubGridCellWrapper: function (pos, iRow) {
+			var prp='',ic,sid;
+			this.each(function(){
+				prp = this.formatCol(pos,iRow);
+				sid= this.p.id;
+				ic = this.p.subGridOptions.plusicon;
+			});
+			if (this.p.fontAwesomeIcons) {
+			} else {
+				return "<td role=\"gridcell\" aria-describedby=\""+sid+"_subgrid\" class=\"ui-sgcollapsed sgcollapsed\" "+prp+"><a style='cursor:pointer;'>" +
+					("<span class='ui-icon "+ic+"'></span>")+
+					"</a></td>";
+			}
+		}
+	});
+	if ($.jgrid.getMethod("orgAddSubGridCell") === undefined) {
+		$.jgrid.extend({
+			orgAddSubGridCell: $.jgrid.getMethod("addSubGridCell")
+		});
+		$.jgrid.extend({
+			addSubGridCell: $.jgrid.getMethod("addSubGridCellWrapper")
+		});
+	}
+*/	
     $.jgrid.extend({
         initFontAwesome: function () {
             return this.each(function () {
@@ -172,7 +203,13 @@
                                 .addClass($.jgrid.icons.getClass("titleHiddenGrid")).parent().addClass($.jgrid.icons.getClass("titleButton"));
                         }
                     }
-                }).bind("jqGridInitGrid", function () {
+                }).bind("jqGridLoadComplete", function () {
+					var $this = $(this);
+					$this.find(">tbody>.jqgrow>td div.ui-inline-edit").html("<span class=\"" + $.jgrid.icons.getClass("actionEdit") + "\"></span>");
+					$this.find(">tbody>.jqgrow>td div.ui-inline-del").html("<span class=\"" + $.jgrid.icons.getClass("actionDel") + "\"></span>");
+					$this.find(">tbody>.jqgrow>td div.ui-inline-save").html("<span class=\"" + $.jgrid.icons.getClass("actionSave") + "\"></span>");
+					$this.find(">tbody>.jqgrow>td div.ui-inline-cancel").html("<span class=\"" + $.jgrid.icons.getClass("actionCancel") + "\"></span>");
+				}).bind("jqGridInitGrid", function () {
                     var $this = $(this), $pager, $sortables;
                     
                     $this.closest(".ui-jqgrid-view")
