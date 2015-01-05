@@ -12,8 +12,11 @@
     /*jslint unparam: true */
     $.extend($.fn.fmatter, {
         checkboxFontAwesome4: function (cellValue, options) {
-            var title = options.colModel.title !== false ? ' title="' + (options.colName || options.colModel.label || options.colModel.name) + '"' : '';
-            return (cellValue === 1 || String(cellValue) === "1" || cellValue === true || String(cellValue).toLowerCase() === "true") ?
+            var title = options.colModel.title !== false ? ' title="' + (options.colName || options.colModel.label || options.colModel.name) + '"' : '',
+				strCellValue = String(cellValue).toLowerCase(),
+				editoptions = options.colModel.editoptions,
+				editYes = editoptions != null && typeof editoptions.value === "string" ? editoptions.value.split(":")[0] : "yes";
+            return (cellValue === 1 || strCellValue === "1" || cellValue === true || strCellValue === "true" || strCellValue === "yes" || strCellValue === editYes) ?
                 '<i class="fa fa-check-square-o fa-lg"' + title + '></i>' :
                 '<i class="fa fa-square-o fa-lg"' + title + '></i>';
         }
