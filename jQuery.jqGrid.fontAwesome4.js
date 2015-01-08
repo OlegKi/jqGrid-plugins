@@ -203,13 +203,13 @@
                                 .addClass($.jgrid.icons.getClass("titleHiddenGrid")).parent().addClass($.jgrid.icons.getClass("titleButton"));
                         }
                     }
-                }).bind("jqGridLoadComplete", function () {
-					var $this = $(this);
-					$this.find(">tbody>.jqgrow>td div.ui-inline-edit").html("<span class=\"" + $.jgrid.icons.getClass("actionEdit") + "\"></span>");
-					$this.find(">tbody>.jqgrow>td div.ui-inline-del").html("<span class=\"" + $.jgrid.icons.getClass("actionDel") + "\"></span>");
-					$this.find(">tbody>.jqgrow>td div.ui-inline-save").html("<span class=\"" + $.jgrid.icons.getClass("actionSave") + "\"></span>");
-					$this.find(">tbody>.jqgrow>td div.ui-inline-cancel").html("<span class=\"" + $.jgrid.icons.getClass("actionCancel") + "\"></span>");
-				}).bind("jqGridInitGrid", function () {
+                }).bind("jqGridLoadComplete jqGridAfterInsertRow", function () {
+                    var $this = $(this);
+                    $this.find(">tbody>.jqgrow>td div.ui-inline-edit").html("<span class=\"" + $.jgrid.icons.getClass("actionEdit") + "\"></span>");
+                    $this.find(">tbody>.jqgrow>td div.ui-inline-del").html("<span class=\"" + $.jgrid.icons.getClass("actionDel") + "\"></span>");
+                    $this.find(">tbody>.jqgrow>td div.ui-inline-save").html("<span class=\"" + $.jgrid.icons.getClass("actionSave") + "\"></span>");
+                    $this.find(">tbody>.jqgrow>td div.ui-inline-cancel").html("<span class=\"" + $.jgrid.icons.getClass("actionCancel") + "\"></span>");
+                }).bind("jqGridInitGrid", function () {
                     var $this = $(this), $pager, $sortables;
                     
                     $this.closest(".ui-jqgrid-view")
