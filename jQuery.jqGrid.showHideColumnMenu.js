@@ -3,7 +3,7 @@
  * Dual licensed under the MIT and GPL licenses
  * http://www.opensource.org/licenses/mit-license.php
  * http://www.gnu.org/licenses/gpl-2.0.html
- * Date: 2014-11-13
+ * Date: 2014-11-13, 2015-03-18
  * see https://github.com/tonytomov/jqGrid/issues/650 for more details
  */
 /*global jQuery */
@@ -15,7 +15,7 @@
 			adjustGridWidth: true,
 			viewHideDlgColumnsAsDisabled: false,
 			shrink: false,
-			menuStyle: {"float": "left"},
+			menuStyle: { "float": "left" },
 			checkboxChecked: "<input disabled=\"disabled\" checked=\"checked\" type=\"checkbox\"/>",
 			checkboxUnChecked: "<input disabled=\"disabled\" type=\"checkbox\"/>",
 			checkboxSelector: "input[type=checkbox]",
@@ -42,7 +42,7 @@
 	$.jgrid.extend({
 		showHideColumnMenu: function (opt) {
 			var options = $.extend(true, {}, $.jgrid.showHideColumnMenu, opt),
-				versionParts = $.ui != null && typeof $.ui.version === "string" ? /^([0-9]+).([0-9]+).([0-9]+)$/.exec($.ui.version) : [],
+				versionParts = $.ui != null && typeof $.ui.version === "string" ? /^([0-9]+)\.([0-9]+)\.([0-9]+)$/.exec($.ui.version) : [],
 				isAncorRequired = versionParts != null && versionParts.length === 4 && versionParts[1] === "1" && versionParts[2] < 11;
 			return this.each(function () {
 				var $self = $(this);
