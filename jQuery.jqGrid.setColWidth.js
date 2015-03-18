@@ -3,7 +3,7 @@
  * Dual licensed under the MIT and GPL licenses
  * http://www.opensource.org/licenses/mit-license.php
  * http://www.gnu.org/licenses/gpl-2.0.html
- * Date: 2013-11-17, 2014-10-18
+ * Date: 2013-11-17, 2014-10-18, 2015-02-24
  * see the answers http://stackoverflow.com/a/20030652/315935
  *             and http://stackoverflow.com/a/14265456/315935
  */
@@ -16,11 +16,10 @@
 	$.jgrid.extend({
 		setColWidth: function (iCol, newWidth, adjustGridWidth) {
 			return this.each(function () {
-				var $self = $(this), grid = this.grid, colName, colModel, i, nCol;
+				var $self = $(this), grid = this.grid, p = this.p, colName, colModel = p.colModel, i, nCol;
 				if (typeof iCol === "string") {
 					// the first parametrer is column name instead of index
 					colName = iCol;
-					colModel = $self.jqGrid("getGridParam", "colModel");
 					for (i = 0, nCol = colModel.length; i < nCol; i++) {
 						if (colModel[i].name === colName) {
 							iCol = i;
@@ -35,9 +34,7 @@
 				}
 				grid.resizing = { idx: iCol };
 				grid.headers[iCol].newWidth = newWidth;
-				if (adjustGridWidth !== false) {
-					grid.newWidth = grid.width + newWidth - grid.headers[iCol].width;
-				}
+				grid.newWidth = p.tblwidth + newWidth - grid.headers[iCol].width;
 				grid.dragEnd();   // adjust column width
 				if (adjustGridWidth !== false) {
 					$self.jqGrid("setGridWidth", grid.newWidth, false); // adjust grid width too
